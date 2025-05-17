@@ -1,0 +1,62 @@
+<div class="container py-5">
+  <h2 class="text-center text-bahia mb-5">Dashboard do Profissional</h2>
+  
+
+  <ul class="nav nav-tabs justify-content-center mb-4">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab==='solicitacoes'" (click)="setActiveTab('solicitacoes')" style="cursor:pointer;">Solicitações</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab==='portifolio'" (click)="setActiveTab('portifolio')" style="cursor:pointer;">Meu Portfólio</a>
+    </li>
+  </ul>
+  
+  <div class="tab-content">
+
+    <div class="tab-pane fade" [class.show]="activeTab==='solicitacoes'" [class.active]="activeTab==='solicitacoes'">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" *ngFor="let request of serviceRequests">
+          <div class="card professional-card h-100 shadow-sm">
+            <div class="card-header bg-bahia text-white">
+              <h5 class="card-title mb-0">{{ request.serviceType }}</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{ request.details }}</p>
+              <p class="card-text"><small class="text-muted"><strong>Data:</strong> {{ request.date }}</small></p>
+              <p class="card-text"><small class="text-muted"><strong>Cliente:</strong> {{ request.cliente }}</small></p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+              <button class="btn btn-success w-100" (click)="aceitarSolicitacao(request.id)" [disabled]="request.status !== 'Pendente'">
+                Aceitar Solicitação
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" [class.show]="activeTab==='portifolio'" [class.active]="activeTab==='portifolio'">
+      <div class="row g-4 mb-4">
+        <div class="col-md-4" *ngFor="let item of portfolio">
+          <div class="card h-100 shadow-sm">
+            <img [src]="item.imageUrl" class="card-img-top" alt="{{ item.title }}">
+            <div class="card-body">
+              <h5 class="card-title text-bahia">{{ item.title }}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card p-3 shadow-sm">
+        <h5 class="text-bahia mb-3">Adicionar Novo Projeto</h5>
+        <div class="mb-2">
+          <input type="text" [(ngModel)]="newPortfolioTitle" placeholder="Título do Projeto" class="form-control">
+        </div>
+        <div class="mb-2">
+          <input type="text" [(ngModel)]="newPortfolioImageUrl" placeholder="URL da Imagem" class="form-control">
+        </div>
+        <button class="btn btn-primary w-100" (click)="addPortfolioItem()" [disabled]="!newPortfolioTitle || !newPortfolioImageUrl">
+          Adicionar Projeto
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

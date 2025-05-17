@@ -1,1 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* Suas classes originais e aprimoradas */
+.bg-bahia {
+  background: linear-gradient(135deg, #0D5C07 0%, #FECC00 50%, #0D5C07 100%);
+}
+.text-bahia {
+  color: #0D5C07;
+}
+.border-bahia {
+  border-color: #FECC00;
+}
+.custom-shadow {
+  box-shadow: 0 4px 6px -1px rgba(13, 92, 7, 0.2), 0 2px 4px -1px rgba(13, 92, 7, 0.1);
+}
+.construction-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230D5C07' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.service-card:hover, .professional-card:hover, .cliente-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn {
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+.navbar {
+  padding: 1rem 2rem;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.btn-primary {
+  background-color: #0D5C07;
+  border-color: #0D5C07;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+}
+
+/* Efeito do hover nos botões (leve opacidade) */
+.btn:hover, .btn:focus {
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+/* Toast para notificações */
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1055;
+  opacity: 0.95;
+}
+
+/* Status dot para solicitações */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.dot-blue { background-color: #007bff; }
+.dot-green { background-color: #28a745; }
+.dot-yellow { background-color: #ffc107; }
+.dot-red { background-color: #dc3545; }

@@ -1,0 +1,78 @@
+<div class="container py-5">
+  <h2 class="text-center text-bahia mb-5">Nossos Serviços</h2>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4" *ngFor="let service of (services$ | async)">
+      <div class="card service-card h-100 shadow-sm">
+        <img *ngIf="service.imageUrl" [src]="service.imageUrl" class="card-img-top" [alt]="service.name" style="object-fit: cover; height: 200px;">
+        <div class="card-body">
+          <h5 class="card-title text-bahia">{{ service.name }}</h5>
+          <p class="card-text">{{ service.description }}</p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button class="btn btn-primary w-100" (click)="showDetails(service)">Ver Detalhes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalhes do Serviço -->
+<div *ngIf="selectedService" class="modal d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-bahia text-white">
+        <h5 class="modal-title">{{ selectedService.name }}</h5>
+        <button type="button" class="btn-close btn-close-white" aria-label="Fechar" (click)="closeDetails()"></button>
+      </div>
+      <div class="modal-body">
+        <img *ngIf="selectedService.imageUrl" [src]="selectedService.imageUrl" class="img-fluid mb-3" [alt]="selectedService.name">
+        <p>{{ selectedService.description }}</p>
+        <hr>
+        <h6 class="text-bahia">Preços Médios</h6>
+        <ul class="list-unstyled small">
+          <li *ngFor="let price of pricing" class="d-flex justify-content-between">
+            <span>{{ price.service }}</span>
+            <span class="fw-bold">{{ price.price }}</span>
+          </li>
+        </ul>
+        <hr>
+        <h6 class="text-bahia">FAQ</h6>
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse" aria-expanded="true">
+                Quanto tempo leva para realizar o serviço?
+              </button>
+            </h2>
+            <div id="faqCollapse" class="accordion-collapse collapse show">
+              <div class="accordion-body">
+                Em média, depende do serviço. Para alvenaria, pequenas intervenções podem levar 1 a 2 dias.
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <h6 class="text-bahia">Solicitar Orçamento</h6>
+        <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="service-details" class="form-label">Detalhes do Serviço</label>
+            <textarea id="service-details" formControlName="serviceDetails" rows="3" class="form-control" placeholder="Descreva suas necessidades..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="service-location" class="form-label">Localização</label>
+            <input type="text" id="service-location" formControlName="serviceLocation" class="form-control" placeholder="Endereço ou CEP">
+          </div>
+          <div class="mb-3">
+            <label for="service-date" class="form-label">Data Pretendida</label>
+            <input type="date" id="service-date" formControlName="serviceDate" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Solicitar Orçamento</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fechar</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+</div>

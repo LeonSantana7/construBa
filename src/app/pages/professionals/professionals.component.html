@@ -1,0 +1,51 @@
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h3 text-bahia">Profissionais</h2>
+    </div>
+    <div class="row">
+
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 professional-card" style="cursor:pointer;" (click)="navigateTo('professional-detail', '1')">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Pedro Silva"
+                   class="rounded-circle me-3" style="width:64px; height:64px;">
+              <div>
+                <h5 class="mb-0 text-bahia">Pedro Silva</h5>
+                <small class="text-secondary">Mestre de obras</small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <div class="text-warning">
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+              </div>
+              <small class="text-muted ms-2">4.9 (87 avaliações)</small>
+            </div>
+            <p class="card-text text-secondary">
+              Especialista com mais de 15 anos de experiência em obras residenciais e comerciais.
+            </p>
+            <div class="d-flex justify-content-between pt-3 border-top">
+              <small class="text-muted">Preço médio: R$ 120,00/m²</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item"><a class="page-link" href="#"><i data-feather="chevron-left"></i></a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#"><i data-feather="chevron-right"></i></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>

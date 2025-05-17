@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg bg-bahia text-white custom-shadow">
+  <div class="container">
+
+    <div class="d-flex align-items-center">
+   
+      <button *ngIf="isDashboard" class="btn btn-link text-white me-2" (click)="goBack()">
+        <i data-feather="arrow-left"></i>
+      </button>
+      <a class="navbar-brand text-white" (click)="navigateTo('')" style="cursor:pointer;">{{ headerTitle }}</a>
+    </div>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ng-container *ngIf="!user; else loggedInMenu">
+        <ul class="navbar-nav me-auto mb-2">
+          <li class="nav-item">
+            <a class="nav-link text-white" (click)="navigateTo('')" style="cursor:pointer;">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" (click)="navigateTo('servicos')" style="cursor:pointer;">Serviços</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" (click)="navigateTo('professionals')" style="cursor:pointer;">Profissionais</a>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #loggedInMenu>
+        <ul class="navbar-nav me-auto mb-2">
+          <li class="nav-item">
+            <a class="nav-link text-white" (click)="navigateTo(user?.role === 'cliente' ? 'cliente-dashboard' : 'professional-dashboard')" style="cursor:pointer;">
+              Dashboard
+            </a>
+          </li>
+        </ul>
+      </ng-template>
+      
+      <div class="d-flex align-items-center">
+        <div class="position-relative me-3">
+          <i data-feather="bell" style="cursor:pointer;" (click)="clearNotifications()"></i>
+          <span *ngIf="notifications.length > 0"
+             class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
+             {{ notifications.length }}
+          </span>
+        </div>
+        <span *ngIf="user" class="me-3">Olá, {{ user.name }}</span>
+        <button *ngIf="user" class="btn btn-outline-light" (click)="logout()">Logout</button>
+        <button *ngIf="!user" class="btn btn-outline-light" (click)="navigateTo('login')">Entrar</button>
+      </div>
+    </div>
+  </div>
+</nav>

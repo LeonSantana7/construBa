@@ -1,0 +1,41 @@
+<div class="container py-5">
+  <h2 class="text-center text-bahia mb-5">Meu Portfólio</h2>
+  
+  <!-- Grid dos Itens do Portfólio -->
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let item of (portfolioItems$ | async)">
+      <div class="card portfolio-card h-100 shadow-sm">
+        <img [src]="item.imageUrl" class="card-img-top" [alt]="item.title" style="object-fit: cover; height: 200px;">
+        <div class="card-body">
+          <h5 class="card-title text-bahia">{{ item.title }}</h5>
+          <p class="card-text">{{ item.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-5 shadow-sm">
+    <div class="card-header bg-bahia text-white">
+      <h4 class="mb-0">Entre em Contato</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="contactForm" (ngSubmit)="sendContactMessage()">
+        <div class="mb-3">
+          <label class="form-label">Seu Nome</label>
+          <input type="text" formControlName="name" class="form-control" placeholder="Digite seu nome">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Seu Email</label>
+          <input type="email" formControlName="email" class="form-control" placeholder="Digite seu email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mensagem</label>
+          <textarea formControlName="message" class="form-control" rows="4" placeholder="Digite sua mensagem"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!contactForm.valid">
+          Enviar Mensagem
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

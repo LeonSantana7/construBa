@@ -1,0 +1,68 @@
+<!-- Hero Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4">
+        <h2 class="display-5 text-bahia mb-3">
+          Encontre os melhores profissionais de construção civil na Bahia
+        </h2>
+        <p class="lead text-secondary mb-4">
+          Solicite serviços, receba orçamentos e transforme seus projetos em realidade com profissionais qualificados.
+        </p>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          <button class="btn btn-outline-primary btn-lg" (click)="navigateTo('cadastro')">
+            Sou Profissional
+          </button>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+             alt="Construção civil"
+             class="img-fluid rounded custom-shadow">
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Seção: Como Funciona -->
+<section class="py-5 bg-white">
+  <div class="container">
+    <h2 class="h3 text-center text-bahia mb-4">Como Funciona</h2>
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="d-flex justify-content-center mb-2">
+          <div class="bg-white rounded-circle shadow d-flex align-items-center justify-content-center"
+               style="width:80px; height:80px;">
+            <span class="fs-2 fw-bold text-bahia">1</span>
+          </div>
+        </div>
+        <h5 class="text-bahia">Solicite o serviço</h5>
+        <p class="text-secondary">Descreva o serviço e sua localização na Bahia.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="d-flex justify-content-center mb-2">
+          <div class="bg-white rounded-circle shadow d-flex align-items-center justify-content-center"
+               style="width:80px; height:80px;">
+            <span class="fs-2 fw-bold text-bahia">2</span>
+          </div>
+        </div>
+        <h5 class="text-bahia">Receba orçamentos</h5>
+        <p class="text-secondary">Profissionais enviarão propostas para seu projeto.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="d-flex justify-content-center mb-2">
+          <div class="bg-white rounded-circle shadow d-flex align-items-center justify-content-center"
+               style="width:80px; height:80px;">
+            <span class="fs-2 fw-bold text-bahia">3</span>
+          </div>
+        </div>
+        <h5 class="text-bahia">Escolha o profissional</h5>
+        <p class="text-secondary">Compare as propostas e selecione o melhor.</p>
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <button class="btn btn-primary" (click)="navigateTo('cadastro')">
+        Solicitar Serviço Agora
+      </button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,123 @@
+<div class="container py-5">
+  <h2 class="text-center text-bahia mb-5">Dashboard do Cliente</h2>
+
+  <!-- Formulário de nova solicitação -->
+  <div class="card mb-5 shadow-sm">
+    <div class="card-header bg-bahia text-white">
+      <h4 class="mb-0">Solicitar Novo Serviço</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="requestForm" (ngSubmit)="onSubmitRequest()">
+        <div class="mb-3">
+          <label class="form-label">Tipo de Serviço</label>
+          <select formControlName="serviceType" class="form-select">
+            <option value="">Selecione</option>
+            <option value="Alvenaria">Alvenaria</option>
+            <option value="Hidráulica">Hidráulica</option>
+            <option value="Elétrica">Elétrica</option>
+            <option value="Reformas">Reformas</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Detalhes</label>
+          <textarea formControlName="details" class="form-control" rows="3" placeholder="Digite os detalhes do serviço"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Data</label>
+          <input type="date" formControlName="date" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success w-100" [disabled]="!requestForm.valid">Solicitar Serviço</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de solicitações -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-4 col-md-6" *ngFor="let request of serviceRequests">
+      <div class="card cliente-card h-100 shadow-sm">
+        <div class="card-header bg-white border-bottom border-bahia">
+          <h5 class="card-title text-bahia">#{{ request.id }} - {{ request.serviceType }}</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ request.details }}</p>
+          <p class="card-text"><small class="text-muted"><strong>Data:</strong> {{ request.date }}</small></p>
+          <p class="card-text">
+            <span [ngClass]="getStatusClass(request.status)"></span>
+            <small>{{ request.status }}</small>
+          </p>
+          <p class="card-text"><small class="text-muted"><strong>Profissional:</strong> {{ request.profissional || '---' }}</small></p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button class="btn btn-warning btn-sm me-2" (click)="openEditModal(request)"
+                  [disabled]="request.status === 'Cancelado' || request.status === 'Aprovado'">
+            Editar
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="cancelRequest(request.id)"
+                  [disabled]="request.status === 'Cancelado' || request.status === 'Aprovado'">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção do profissional disponível -->
+  <div class="mb-5">
+    <h3 class="text-center text-bahia mb-4">Trabalhos &amp; Contato do Profissional</h3>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="card cliente-card h-100 shadow-sm">
+          <img src="https://randomuser.me/api/portraits/men/50.jpg" alt="Profissional Teste" class="card-img-top"
+               style="object-fit: cover; height:200px; border-top-left-radius:1rem; border-top-right-radius:1rem;">
+          <div class="card-body text-center">
+            <h5 class="card-title text-bahia">Profissional Teste</h5>
+            <p class="card-text">Veja o portfólio e entre em contato para contratar.</p>
+          </div>
+          <div class="card-footer bg-transparent border-0">
+            <a [routerLink]="['/professional-portfolio', 1]" class="btn btn-outline-primary w-100">
+              Ver Portfólio &amp; Contatar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de edição -->
+<div class="modal-backdrop fade show" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+        <div class="modal-header bg-bahia text-white">
+          <h5 class="modal-title">Editar Solicitação</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Tipo de Serviço</label>
+            <select formControlName="serviceType" class="form-select">
+              <option value="Alvenaria">Alvenaria</option>
+              <option value="Hidráulica">Hidráulica</option>
+              <option value="Elétrica">Elétrica</option>
+              <option value="Reformas">Reformas</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Detalhes</label>
+            <textarea formControlName="details" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Data</label>
+            <input type="date" formControlName="date" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

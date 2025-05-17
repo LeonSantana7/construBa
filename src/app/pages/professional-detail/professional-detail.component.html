@@ -1,0 +1,67 @@
+<div class="container py-5">
+  <div class="row mb-5">
+    <div class="col-md-3 text-center">
+      <img [src]="professional.photoUrl" alt="{{ professional.name }}" class="img-fluid rounded-circle shadow mb-3" style="width: 150px; height: 150px;">
+      <h4 class="text-bahia">{{ professional.name }}</h4>
+      <a class="btn btn-outline-primary w-100 mt-3" [routerLink]="['/professional-portfolio', professional]">
+        Ver Portfólio
+      </a>
+    </div>
+    <div class="col-md-9">
+      <p class="lead">{{ professional.bio }}</p>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs justify-content-center mb-4">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'portfolio'" (click)="setActiveTab('portfolio')" style="cursor:pointer;">Portfólio</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'chat'" (click)="setActiveTab('chat')" style="cursor:pointer;">Chat &amp; Contratar</a>
+    </li>
+  </ul>
+
+ 
+  <div class="tab-content">
+
+    <div class="tab-pane fade" [class.show]="activeTab === 'portfolio'" [class.active]="activeTab === 'portfolio'">
+      <div class="row g-4">
+        <div class="col-md-4" *ngFor="let project of professional.portfolio">
+          <div class="card h-100 shadow-sm">
+            <img [src]="project.imageUrl" class="card-img-top" alt="{{ project.title }}">
+            <div class="card-body">
+              <h5 class="card-title text-bahia">{{ project.title }}</h5>
+              <p class="card-text">{{ project.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="tab-pane fade" [class.show]="activeTab === 'chat'" [class.active]="activeTab === 'chat'">
+      <div class="card shadow-sm">
+        <div class="card-header bg-bahia text-white">
+          <h5 class="mb-0">Chat com {{ professional.name }}</h5>
+        </div>
+        <div class="card-body chat-body" style="height:300px; overflow-y:auto;">
+          <div *ngFor="let msg of chatMessages" class="mb-3" [ngClass]="{'text-end': msg.sender === 'Cliente Teste'}">
+            <div class="d-inline-block p-2 rounded" 
+                 [ngClass]="msg.sender === 'Cliente Teste' ? 'bg-light text-dark' : 'bg-bahia text-white'">
+              <small><strong>{{ msg.sender }}</strong></small>
+              <p class="mb-0">{{ msg.content }}</p>
+              <small class="text-muted">{{ msg.timestamp | date:'shortTime' }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="input-group">
+            <input type="text" [(ngModel)]="newChatMessage" class="form-control" placeholder="Digite sua mensagem">
+            <button class="btn btn-primary" (click)="sendMessage()">Enviar</button>
+          </div>
+          <button class="btn btn-success w-100 mt-3" (click)="contratar()">Contratar Profissional</button>
+          <a class="btn btn-outline-primary w-100 mt-2" [href]="'mailto:' + getProfessionalEmail()">Contatar por Email</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

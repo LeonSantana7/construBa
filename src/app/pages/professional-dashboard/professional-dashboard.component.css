@@ -1,0 +1,12 @@
+/* src/app/pages/professional-dashboard/professional-dashboard.component.css */
+.table {
+  font-size: 0.9rem;
+}
+.professional-card {
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.professional-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
