@@ -17,7 +17,6 @@ export class ServicesComponent implements OnInit {
 
   serviceForm!: FormGroup;
 
-
   pricing = [
     { service: 'Exemplo 1', price: 'R$ 80-120/m²' },
     { service: 'Exemplo 2', price: 'R$ 150-200/m²' },

@@ -16,7 +16,7 @@ import { filter } from 'rxjs/operators';
 export class HeaderComponent implements OnInit, AfterViewInit {
   user: User | null = null;
   notifications: Notification[] = [];
-  headerTitle = 'Construba';
+  headerTitle = 'ConstruBA';
   isDashboard = false;  
 
   constructor(

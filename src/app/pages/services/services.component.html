@@ -16,16 +16,32 @@
   </div>
 </div>
 
-<!-- Modal de Detalhes do Serviço -->
-<div *ngIf="selectedService" class="modal d-block" tabindex="-1" role="dialog" aria-modal="true">
-  <div class="modal-dialog modal-lg">
+<div
+  *ngIf="selectedService"
+  class="modal d-block"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+  (click)="closeDetails()"
+>
+  <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
     <div class="modal-content">
       <div class="modal-header bg-bahia text-white">
         <h5 class="modal-title">{{ selectedService.name }}</h5>
-        <button type="button" class="btn-close btn-close-white" aria-label="Fechar" (click)="closeDetails()"></button>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Fechar"
+          (click)="closeDetails()"
+        ></button>
       </div>
       <div class="modal-body">
-        <img *ngIf="selectedService.imageUrl" [src]="selectedService.imageUrl" class="img-fluid mb-3" [alt]="selectedService.name">
+        <img
+          *ngIf="selectedService.imageUrl"
+          [src]="selectedService.imageUrl"
+          class="img-fluid mb-3"
+          [alt]="selectedService.name"
+        >
         <p>{{ selectedService.description }}</p>
         <hr>
         <h6 class="text-bahia">Preços Médios</h6>
@@ -40,13 +56,19 @@
         <div class="accordion" id="faqAccordion">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faqHeading">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse" aria-expanded="true">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faqCollapse"
+                aria-expanded="true"
+              >
                 Quanto tempo leva para realizar o serviço?
               </button>
             </h2>
             <div id="faqCollapse" class="accordion-collapse collapse show">
               <div class="accordion-body">
-                Em média, depende do serviço. Para alvenaria, pequenas intervenções podem levar 1 a 2 dias.
+                Em média, depende do serviço. Para alvenaria, pequenas intervenções podem levar 1 a 5 dias.
               </div>
             </div>
           </div>
@@ -56,15 +78,32 @@
         <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
           <div class="mb-3">
             <label for="service-details" class="form-label">Detalhes do Serviço</label>
-            <textarea id="service-details" formControlName="serviceDetails" rows="3" class="form-control" placeholder="Descreva suas necessidades..."></textarea>
+            <textarea
+              id="service-details"
+              formControlName="serviceDetails"
+              rows="3"
+              class="form-control"
+              placeholder="Descreva suas necessidades..."
+            ></textarea>
           </div>
           <div class="mb-3">
             <label for="service-location" class="form-label">Localização</label>
-            <input type="text" id="service-location" formControlName="serviceLocation" class="form-control" placeholder="Endereço ou CEP">
+            <input
+              type="text"
+              id="service-location"
+              formControlName="serviceLocation"
+              class="form-control"
+              placeholder="Endereço ou CEP"
+            >
           </div>
           <div class="mb-3">
             <label for="service-date" class="form-label">Data Pretendida</label>
-            <input type="date" id="service-date" formControlName="serviceDate" class="form-control">
+            <input
+              type="date"
+              id="service-date"
+              formControlName="serviceDate"
+              class="form-control"
+            >
           </div>
           <button type="submit" class="btn btn-primary w-100">Solicitar Orçamento</button>
         </form>
@@ -74,5 +113,4 @@
       </div>
     </div>
   </div>
-  <div class="modal-backdrop fade show"></div>
 </div>

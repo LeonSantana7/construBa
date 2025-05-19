@@ -10,7 +10,7 @@ export interface ServiceRequest {
   date: string;
   status: RequestStatus;
   cliente: string;
-  profissional?: string; // Nome do profissional que aceitou/concluiu
+  profissional?: string; 
 }
 
 @Injectable({
