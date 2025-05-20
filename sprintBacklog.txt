@@ -1,0 +1,68 @@
+Sprint Backlog - construBa
+
+Período do Sprint: 5 dias
+Objetivo do Sprint: Implementar funcionalidades essenciais do dashboard e otimizar a interface de solicitações de serviços.
+
+-------------------------------------------------
+Histórias de Usuário
+
+US-001 - Cadastro de Novo Serviço
+Como um cliente,
+Eu quero preencher um formulário para solicitar um novo serviço,
+Para que eu possa registrar a necessidade e acompanhar o andamento.
+
+Critérios de Aceitação:
+- O formulário deve conter campos para tipo de serviço, descrição, data desejada e upload de imagens.
+- Deve validar os dados antes de permitir o envio.
+- Após o envio, o serviço deve ser listado no dashboard.
+
+Estimativa de esforço: 3 pontos
+Status: Concluído
+
+-------------------------------------------------
+US-002 - Dashboard de Solicitações
+Como um cliente,
+Eu quero visualizar todas as minhas solicitações de serviço,
+Para que eu possa acompanhar status e detalhes.
+
+Critérios de Aceitação:
+- Listar serviços pendentes, em andamento e concluídos.
+- Permitir filtros de busca por tipo ou status.
+- Exibir ações rápidas (editar/cancelar).
+
+Estimativa de esforço: 4 pontos
+Status: Concluído
+
+-------------------------------------------------
+US-003 - Edição e Cancelamento de Solicitação
+Como um cliente,
+Eu quero editar ou cancelar uma solicitação,
+Para que eu possa corrigir informações ou desistir do pedido.
+
+Critérios de Aceitação:
+- Botão de edição permite modificar detalhes de serviços pendentes.
+- Cancelamento exige confirmação antes de excluir o pedido.
+- Alterações devem ser refletidas no dashboard instantaneamente.
+
+Estimativa de esforço: 3 pontos
+Status: Concluído
+
+-------------------------------------------------
+US-004 - Tela de Detalhamento do Serviço
+Como um cliente,
+Eu quero visualizar informações detalhadas de um serviço,
+Para que eu possa acompanhar o progresso e interagir com o profissional.
+
+Critérios de Aceitação:
+- Mostrar histórico de atualizações do serviço.
+- Permitir envio de comentários e feedback.
+- Exibir galeria de imagens do trabalho realizado.
+
+Estimativa de esforço: 4 pontos
+Status: Concluído
+
+-------------------------------------------------
+
+Resumo do Sprint
+Total de histórias concluídas: 4
+Backlog futuro: Melhorias na usabilidade e integração com APIs externas, alem de implementar um chat.
