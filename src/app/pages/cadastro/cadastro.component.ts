@@ -18,19 +18,11 @@ import { CommonModule } from '@angular/common';
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
-  encapsulation: ViewEncapsulation.None   
+  encapsulation: ViewEncapsulation.None
 })
 export class CadastroComponent implements OnInit {
   cadastroForm!: FormGroup;
   showTermsModal = false;
-
-
-  passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const formGroup = control as FormGroup;
-    return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value
-      ? null
-      : { mismatch: true };
-  };
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -44,6 +36,13 @@ export class CadastroComponent implements OnInit {
       termos: new FormControl(false, Validators.requiredTrue)
     }, { validators: this.passwordMatchValidator });
   }
+
+  passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const formGroup = control as FormGroup;
+    return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value
+      ? null
+      : { mismatch: true };
+  };
 
   onSubmit(): void {
     if (!this.cadastroForm.valid) return;

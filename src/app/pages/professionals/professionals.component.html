@@ -4,7 +4,6 @@
       <h2 class="h3 text-bahia">Profissionais</h2>
     </div>
     <div class="row">
-
       <div class="col-md-4 mb-4">
         <div class="card h-100 professional-card" style="cursor:pointer;" (click)="navigateTo('professional-detail', '1')">
           <div class="card-body">
@@ -35,17 +34,91 @@
           </div>
         </div>
       </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 professional-card" style="cursor:pointer;" (click)="navigateTo('professional-detail', '2')">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Ana Souza"
+                   class="rounded-circle me-3" style="width:64px; height:64px;">
+              <div>
+                <h5 class="mb-0 text-bahia">Ana Souza</h5>
+                <small class="text-secondary">Engenheira Civil</small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <div class="text-warning">
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+              </div>
+              <small class="text-muted ms-2">4.7 (65 avaliações)</small>
+            </div>
+            <p class="card-text text-secondary">
+              Especialista em planejamento e execução de projetos estruturais.
+            </p>
+            <div class="d-flex justify-content-between pt-3 border-top">
+              <small class="text-muted">Preço médio: R$ 150,00/m²</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 professional-card" style="cursor:pointer;" (click)="navigateTo('professional-detail', '3')">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Carlos Mendes"
+                   class="rounded-circle me-3" style="width:64px; height:64px;">
+              <div>
+                <h5 class="mb-0 text-bahia">Carlos Mendes</h5>
+                <small class="text-secondary">Arquiteto</small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <div class="text-warning">
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star"></i>
+                <i data-feather="star-half"></i>
+              </div>
+              <small class="text-muted ms-2">4.8 (92 avaliações)</small>
+            </div>
+            <p class="card-text text-secondary">
+              Criatividade e inovação para transformar espaços residenciais e comerciais.
+            </p>
+            <div class="d-flex justify-content-between pt-3 border-top">
+              <small class="text-muted">Preço médio: R$ 180,00/m²</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="text-center mt-3">
-      <nav>
-        <ul class="pagination justify-content-center">
-          <li class="page-item"><a class="page-link" href="#"><i data-feather="chevron-left"></i></a></li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#"><i data-feather="chevron-right"></i></a></li>
-        </ul>
-      </nav>
-    </div>
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="$event.preventDefault()">
+          <i data-feather="chevron-left"></i>
+        </a>
+      </li>
+      <li class="page-item active">
+        <a class="page-link" href="#" (click)="$event.preventDefault()">1</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="$event.preventDefault()">2</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="$event.preventDefault()">3</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#" (click)="$event.preventDefault()">
+          <i data-feather="chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
   </div>
 </section>

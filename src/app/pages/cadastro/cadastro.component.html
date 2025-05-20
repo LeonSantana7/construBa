@@ -6,7 +6,6 @@
           <h3 class="card-title text-bahia mb-4">Cadastro</h3>
 
           <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
-            <!-- Nome -->
             <div class="mb-3">
               <label for="nome" class="form-label">Nome</label>
               <input type="text" id="nome" formControlName="nome" class="form-control" placeholder="Digite seu nome">
@@ -15,7 +14,6 @@
               </div>
             </div>
 
-            <!-- Email -->
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input type="email" id="email" formControlName="email" class="form-control" placeholder="Digite seu email">
@@ -25,7 +23,6 @@
               </div>
             </div>
 
-            <!-- Senha -->
             <div class="mb-3">
               <label for="password" class="form-label">Senha</label>
               <input type="password" id="password" formControlName="password" class="form-control" placeholder="Digite sua senha">
@@ -37,7 +34,6 @@
               </div>
             </div>
 
-            <!-- Confirmar Senha -->
             <div class="mb-3">
               <label for="confirmPassword" class="form-label">Confirmar Senha</label>
               <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control" placeholder="Confirme sua senha">
@@ -46,7 +42,6 @@
               </div>
             </div>
 
-            <!-- Role e Termos -->
             <div class="mb-3">
               <label class="form-label">Você é:</label>
               <div class="form-check">
@@ -62,6 +57,7 @@
                 Os dados serão mantidos enquanto você desejar.
                 <a href="#" (click)="openTermsModal($event)">Termos e Condições</a>
               </p>
+
               <div class="form-check">
                 <input type="checkbox" id="termos" formControlName="termos" class="form-check-input">
                 <label class="form-check-label" for="termos">Sim, li e concordo com os termos.</label>
@@ -83,7 +79,7 @@
   </div>
 </div>
 
-<div *ngIf="showTermsModal" class="modal d-block fade show" tabindex="-1" (click)="closeTermsModal()">
+<div *ngIf="showTermsModal" class="modal d-block" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
     <div class="modal-content">
       <div class="modal-header bg-bahia text-white">
@@ -91,8 +87,7 @@
         <button type="button" class="btn-close btn-close-white" aria-label="Fechar" (click)="closeTermsModal()"></button>
       </div>
       <div class="modal-body">
-        <div>
-          <p>
+        <p>
             <strong>Termos e Condições - ConstruBA</strong><br>
             Última atualização: Maio 2025
           </p>
@@ -123,11 +118,13 @@
             &bull; Podemos alterar estes termos a qualquer momento; o uso contínuo indica aceitação das alterações.<br>
             &bull; Quaisquer disputas serão resolvidas segundo a legislação brasileira, com foro em Salvador, Bahia.
           </p>
-        </div>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeTermsModal()">Fechar</button>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="showTermsModal" class="modal-backdrop fade show"></div>
+
+
+<div *ngIf="showTermsModal" class="modal-backdrop fade show" (click)="closeTermsModal()"></div>
