@@ -1,42 +1,42 @@
 Sprint Backlog - construBa
 
-Período do Sprint: 5 dias
+Período do Sprint: 5 dias  
 Objetivo do Sprint: Implementar funcionalidades essenciais do dashboard e otimizar a interface de solicitações de serviços.
 
 -------------------------------------------------
-Histórias de Usuário
+Histórias de Usuário - Cliente
 
-US-001 - Cadastro de Novo Serviço
-Como um cliente,
-Eu quero preencher um formulário para solicitar um novo serviço,
+US-001 - Cadastro de Novo Serviço  
+Como um cliente,  
+Eu quero preencher um formulário para solicitar um novo serviço,  
 Para que eu possa registrar a necessidade e acompanhar o andamento.
 
 Critérios de Aceitação:
-- O formulário deve conter campos para tipo de serviço, descrição, data desejada e upload de imagens.
-- Deve validar os dados antes de permitir o envio.
+- O formulário deve conter campos para tipo de serviço, descrição, data desejada.
+- Deve validar os campos obrigatórios antes de permitir o envio.
 - Após o envio, o serviço deve ser listado no dashboard.
 
-Estimativa de esforço: 3 pontos
-Status: Concluído
+Estimativa de esforço: 3 pontos  
+Status: Concluído  
 
 -------------------------------------------------
-US-002 - Dashboard de Solicitações
-Como um cliente,
-Eu quero visualizar todas as minhas solicitações de serviço,
+US-002 - Dashboard de Solicitações  
+Como um cliente,  
+Eu quero visualizar todas as minhas solicitações de serviço,  
 Para que eu possa acompanhar status e detalhes.
 
 Critérios de Aceitação:
 - Listar serviços pendentes, em andamento e concluídos.
-- Permitir filtros de busca por tipo ou status.
 - Exibir ações rápidas (editar/cancelar).
+- Atualizar dinamicamente quando houver mudanças.
 
-Estimativa de esforço: 4 pontos
-Status: Concluído
+Estimativa de esforço: 4 pontos  
+Status: Concluído  
 
 -------------------------------------------------
-US-003 - Edição e Cancelamento de Solicitação
-Como um cliente,
-Eu quero editar ou cancelar uma solicitação,
+US-003 - Edição e Cancelamento de Solicitação  
+Como um cliente,  
+Eu quero editar ou cancelar uma solicitação,  
 Para que eu possa corrigir informações ou desistir do pedido.
 
 Critérios de Aceitação:
@@ -44,25 +44,70 @@ Critérios de Aceitação:
 - Cancelamento exige confirmação antes de excluir o pedido.
 - Alterações devem ser refletidas no dashboard instantaneamente.
 
-Estimativa de esforço: 3 pontos
-Status: Concluído
+Estimativa de esforço: 3 pontos  
+Status: Concluído  
 
 -------------------------------------------------
-US-004 - Tela de Detalhamento do Serviço
-Como um cliente,
-Eu quero visualizar informações detalhadas de um serviço,
+US-004 - Tela de Detalhamento do Serviço  
+Como um cliente,  
+Eu quero visualizar informações detalhadas de um serviço,  
 Para que eu possa acompanhar o progresso e interagir com o profissional.
 
 Critérios de Aceitação:
-- Mostrar histórico de atualizações do serviço.
-- Permitir envio de comentários e feedback.
 - Exibir galeria de imagens do trabalho realizado.
+- Permitir que o cliente envie mensagens ao profissional.
 
-Estimativa de esforço: 4 pontos
-Status: Concluído
+
+Estimativa de esforço: 4 pontos  
+Status: Concluído  
 
 -------------------------------------------------
+Histórias de Usuário - Profissional
 
-Resumo do Sprint
-Total de histórias concluídas: 4
-Backlog futuro: Melhorias na usabilidade e integração com APIs externas, alem de implementar um chat.
+US-005 - Aceitação de Solicitação  
+Como um profissional,  
+Eu quero visualizar todas as solicitações disponíveis,  
+Para que eu possa aceitar e começar a execução dos serviços.
+
+Critérios de Aceitação:
+- O profissional deve ter uma tela com lista de serviços disponíveis.
+- Deve ser possível aceitar ou recusar uma solicitação.
+- Após aceitação, o serviço deve mudar para "Aprovado" no dashboard do cliente.
+
+Estimativa de esforço: 4 pontos  
+Status: Concluído  
+
+-------------------------------------------------
+US-006 - Envio de Fotos e Feedback  
+Como um profissional,  
+Eu quero enviar fotos do serviço realizado e um comentário final,  
+Para que o cliente possa verificar a qualidade e dar uma avaliação.
+
+Critérios de Aceitação:
+- O profissional pode anexar imagens ao serviço concluído.
+- O cliente recebe uma notificação para avaliar o serviço.
+- Comentários do profissional devem ser exibidos na tela de detalhamento.
+- O cliente pode dar uma nota e escrever um feedback.
+
+Estimativa de esforço: 5 pontos  
+Status: Em andamento  
+
+-------------------------------------------------
+US-007 - Implementação de Chat  
+Como um cliente ou profissional,  
+Eu quero um chat integrado na plataforma,  
+Para que eu possa tirar dúvidas ou enviar atualizações sem precisar de outro meio de comunicação.
+
+Critérios de Aceitação:
+- O cliente e o profissional podem trocar mensagens dentro da plataforma.
+- As mensagens devem ser armazenadas no histórico da solicitação.
+- Permitir envio de imagens e arquivos.
+- Notificações devem ser enviadas quando há novas mensagens.
+
+Estimativa de esforço: 6 pontos  
+Status: Backlog futuro  
+-------------------------------------------------
+Resumo do Sprint  
+✅ Total de histórias concluídas: 6  
+⏳ Em andamento: 1  
+📌 Backlog futuro: Melhorias na usabilidade, integração com APIs externas e implementação do chat.  
