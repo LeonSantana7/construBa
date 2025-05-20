@@ -1,59 +1,134 @@
-# Construba
+<!-- badges -->
+[![GitHub stars](https://img.shields.io/github/stars/LeonSantana7/construBa?style=flat-square)](https://github.com/LeonSantana7/construBa/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/LeonSantana7/construBa?style=flat-square)](https://github.com/LeonSantana7/construBa/network)
+[![License](https://img.shields.io/github/license/LeonSantana7/construBa?style=flat-square)](LICENSE)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.11.
+# ConstruBa
 
-## Development server
+O **ConstruBa** é uma plataforma completa para gerenciar serviços na construção civil. Com um dashboard intuitivo, contratantes podem solicitar novos serviços, acompanhar o andamento dos pedidos e interagir diretamente com profissionais, tudo em um só lugar.
 
-To start a local development server, run:
+---
 
-```bash
+## 📋 Sumário
+
+- [Funcionalidades](#-funcionalidades)  
+- [Screenshots](#-screenshots)  
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)  
+- [Pré‑requisitos](#-pré-requisitos)  
+- [Instalação e Configuração](#-instalação-e-configuração)  
+- [Contribuição](#-contribuição)  
+- [Licença](#-licença)  
+- [Autor](#-autor)  
+
+---
+
+## 🚀 Funcionalidades
+
+- **Solicitar Novo Serviço**  
+  - Formulário detalhado: escolha de tipo de serviço, descrição, data desejada e upload de imagens.  
+  - Validação em tempo real para garantir dados completos.
+
+- **Dashboard Interativo**  
+  - Listagem de solicitações com filtro por status (Pendente, Em andamento, Concluído).  
+  - Ações de editar, cancelar ou avaliar cada serviço.
+
+- **Detalhamento do Serviço**  
+  - Histórico de atualizações, comentários do profissional e galeria de fotos.  
+
+- **Edição e Cancelamento**  
+  - Edição de detalhes de serviços pendentes e confirmação de cancelamento para evitar ações acidentais.
+
+
+---
+
+## 🖼️ Screenshots
+
+### Tela Principal
+![image](https://github.com/user-attachments/assets/be17d5f5-7c93-4355-8914-34f1ed87dd68)
+
+### Dashboard do Cliente  
+![image](https://github.com/user-attachments/assets/f8a4996f-04fb-46a4-ba07-e0e0d027b05e)
+
+### Dashboard do Profissional
+![image](https://github.com/user-attachments/assets/41ea9f78-7882-4cfa-bf56-4022c960829f)
+
+### Detalhamento do Serviço  
+![image](https://github.com/user-attachments/assets/4a662f1c-8eb9-47e8-9acb-7b05b41b4681)
+
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Front‑end**  
+  - HTML, CSS, JavaScript, Typescript.  
+  - Angular CLI (versão 19.x)  
+  - Componentes Standalone e Reactive Forms  
+
+- **Back‑end**  
+  - Node.js 
+
+
+- **Dependências Adicionais**  
+  - Axios / HttpClient (Angular)  
+  - ng-bootstrap / Bootstrap 5  
+
+---
+
+## ⚙️ Pré‑requisitos
+
+Antes de começar, certifique-se de ter instalado:
+- Git  
+- Node.js v14 ou superior  
+- npm ou yarn  
+
+---
+
+## 📥 Instalação e Configuração
+
+1. **Clone o repositório**
+
+   ```bash
+   git clone https://github.com/LeonSantana7/construBa.git
+   cd construBa
+2. **Instale as dependências**
+
+  ```bash
+  npm install
+  # ou
+  yarn install
+```
+3. **Servidor de Desenvolvimento (Angular CLI)** <br>
+  Inicie o front‑end em modo de desenvolvimento:
+  ```bash
+bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🤝 Contribuição
+1.**Fork este repositório**
+2.**Crie uma branch feature:**
+```bash
+git checkout -b feature/nome-da-sua-feature
+```
+3.Faça commit das suas alterações:
 
 ```bash
-ng generate component component-name
+git commit -m "Adiciona nova feature"
 ```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+4.**Push para a branch:**
 
 ```bash
-ng generate --help
+git push origin feature/nome-da-sua-feature
 ```
+5.**Abra um Pull Request**
 
-## Building
+## 📄 Licença
+Este projeto está licenciado sob a MIT License.
 
-To build the project run:
+## ✍️ Autor
+Leon Santana
 
-```bash
-ng build
-```
+GitHub: @LeonSantana7
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Email: leon.santana854@gmail.com
