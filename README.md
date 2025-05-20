@@ -71,7 +71,7 @@ O **ConstruBa** é uma plataforma completa para gerenciar serviços na construç
 
 - **Dependências Adicionais**  
   - Axios / HttpClient (Angular)  
-  - ng-bootstrap / Bootstrap 5  
+  - Bootstrap 5  
 
 ---
 
