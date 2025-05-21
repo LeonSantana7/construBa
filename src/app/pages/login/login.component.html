@@ -4,8 +4,9 @@
       <div class="card custom-shadow">
         <div class="card-body">
           <h3 class="card-title text-bahia mb-4">Entrar</h3>
- 
+
           <input type="text" name="fakeusernameremembered" style="display:none" />
+          
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
@@ -20,14 +21,15 @@
               <div
                 *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="text-danger mt-1"
               >
-              <div *ngIf="loginForm.get('email')?.errors?.['required']">
-                O email é obrigatório.
-              </div>
-              <div *ngIf="loginForm.get('email')?.errors?.['email']">
-                Digite um email válido.
-              </div>
+                <div *ngIf="loginForm.get('email')?.errors?.['required']">
+                  O email é obrigatório.
+                </div>
+                <div *ngIf="loginForm.get('email')?.errors?.['email']">
+                  Digite um email válido.
+                </div>
               </div>
             </div>
+
             <div class="mb-3">
               <label for="password" class="form-label">Senha</label>
               <input
@@ -47,8 +49,10 @@
                 </div>
               </div>
             </div>
+
             <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Entrar</button>
           </form>
+
           <div class="text-center mt-3">
             <p>Ainda não possui conta? <a (click)="navigateTo('cadastro')" style="cursor:pointer;">Cadastre-se</a></p>
           </div>

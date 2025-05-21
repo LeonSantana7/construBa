@@ -9,7 +9,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service.service';
+import { AuthService } from '../../services/auth.service.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -44,21 +44,18 @@ export class CadastroComponent implements OnInit {
       : { mismatch: true };
   };
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (!this.cadastroForm.valid) return;
 
-    const newUser: User = {
-      email: this.cadastroForm.value.email,
-      role: this.cadastroForm.value.role,
-      name: this.cadastroForm.value.nome
-    };
-    localStorage.setItem('user', JSON.stringify(newUser));
-    this.authService.login(newUser.email, this.cadastroForm.value.password, newUser.role);
+    const { nome, email, password, role } = this.cadastroForm.value;
 
-    if (newUser.role === 'cliente') {
-      this.router.navigate(['/cliente-dashboard']);
+    // Chama signup com 4 argumentos
+    const success = await this.authService.signup(email, password, nome, role);
+
+    if (success) {
+      this.router.navigate([role === 'cliente' ? '/cliente-dashboard' : '/professional-dashboard']);
     } else {
-      this.router.navigate(['/professional-dashboard']);
+      alert('Erro ao criar conta. Tente novamente.');
     }
   }
 
