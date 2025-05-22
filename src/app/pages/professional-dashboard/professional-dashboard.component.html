@@ -1,16 +1,15 @@
 <div class="container py-5">
   <h2 class="text-center text-bahia mb-5">Dashboard do Profissional</h2>
-  
 
   <ul class="nav nav-tabs justify-content-center mb-4">
     <li class="nav-item">
       <a class="nav-link" [class.active]="activeTab==='solicitacoes'" (click)="setActiveTab('solicitacoes')" style="cursor:pointer;">Solicitações</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab==='portifolio'" (click)="setActiveTab('portifolio')" style="cursor:pointer;">Meu Portfólio</a>
+      <a class="nav-link" [class.active]="activeTab==='portfolio'" (click)="setActiveTab('portfolio')" style="cursor:pointer;">Meu Portfólio</a>
     </li>
   </ul>
-  
+
   <div class="tab-content">
 
     <div class="tab-pane fade" [class.show]="activeTab==='solicitacoes'" [class.active]="activeTab==='solicitacoes'">
@@ -34,17 +33,19 @@
         </div>
       </div>
     </div>
-    <div class="tab-pane fade" [class.show]="activeTab==='portifolio'" [class.active]="activeTab==='portifolio'">
+
+    <div class="tab-pane fade" [class.show]="activeTab==='portfolio'" [class.active]="activeTab==='portfolio'">
       <div class="row g-4 mb-4">
         <div class="col-md-4" *ngFor="let item of portfolio">
           <div class="card h-100 shadow-sm">
-            <img [src]="item.imageUrl" class="card-img-top" alt="{{ item.title }}">
+            <img [src]="item.imageUrl" class="card-img-top" [alt]="item.title">
             <div class="card-body">
               <h5 class="card-title text-bahia">{{ item.title }}</h5>
             </div>
           </div>
         </div>
       </div>
+
       <div class="card p-3 shadow-sm">
         <h5 class="text-bahia mb-3">Adicionar Novo Projeto</h5>
         <div class="mb-2">

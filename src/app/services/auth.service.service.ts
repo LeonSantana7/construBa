@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, UserCredential, User as FirebaseUser } from 'firebase/auth';
-import { Firestore, setDoc, doc } from '@angular/fire/firestore';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, UserCredential } from '@angular/fire/auth';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 
 export interface User {
-  uid?: string;
+  uid: string;
   email: string;
   role: 'cliente' | 'profissional';
   name: string;
@@ -17,62 +17,81 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
-  constructor(private firestore: Firestore) {
-    const auth = getAuth();
-
-    // Ouve as mudanças no estado de autenticação
-    onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        // Você pode buscar dados reais do Firestore aqui, se quiser
-        // Por enquanto, defino role e name com base no email, igual no login
-        const user: User = {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          role: firebaseUser.email === 'profissional@default.com' ? 'profissional' : 'cliente',
-          name: firebaseUser.email === 'profissional@default.com' ? 'Profissional Teste' : 'Cliente Teste'
-        };
-        this.userSubject.next(user);
-      } else {
+  constructor(private auth: Auth, private firestore: Firestore) {
+    onAuthStateChanged(this.auth, async fbUser => {
+      if (!fbUser) {
         this.userSubject.next(null);
+        return;
+      }
+
+      const userRef = doc(this.firestore, 'users', fbUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data() as Omit<User, 'uid'>;
+        this.userSubject.next({
+          uid: fbUser.uid,
+          email: data.email,
+          name: data.name,
+          role: data.role
+        });
+      } else {
+        this.userSubject.next({
+          uid: fbUser.uid,
+          email: fbUser.email || '',
+          role: 'cliente',
+          name: fbUser.email || 'Sem Nome'
+        });
       }
     });
   }
 
   async login(email: string, password: string): Promise<boolean> {
-    const auth = getAuth();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Usuário será definido automaticamente no onAuthStateChanged
+      await signInWithEmailAndPassword(this.auth, email, password);
       return true;
-    } catch (error) {
-      console.error('Erro no login:', error);
+    } catch (err) {
+      console.error('Login falhou:', err);
       return false;
     }
   }
 
-  async signup(email: string, password: string, name: string, role: 'cliente' | 'profissional'): Promise<boolean> {
-    const auth = getAuth();
-    try {
-      const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const newUser: User = {
-        uid: userCredential.user.uid,
-        email,
-        role,
-        name
-      };
+  getCurrentUser(): User | null {
+    return this.userSubject.getValue();
+  }
 
-      await setDoc(doc(this.firestore, 'users', newUser.uid!), newUser);
-      this.userSubject.next(newUser);
+  async signup(
+    email: string,
+    password: string,
+    name: string,
+    role: 'cliente' | 'profissional'
+  ): Promise<boolean> {
+    try {
+      const cred: UserCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
+
+      const userRef = doc(this.firestore, 'users', cred.user.uid);
+      await setDoc(userRef, { email, name, role });
+
+      this.userSubject.next({
+        uid: cred.user.uid,
+        email,
+        name,
+        role
+      });
+
       return true;
-    } catch (error) {
-      console.error('Erro no cadastro:', error);
+    } catch (err) {
+      console.error('Signup falhou:', err);
       return false;
     }
   }
 
   logout(): void {
-    const auth = getAuth();
-    auth.signOut();
+    this.auth.signOut();
     this.userSubject.next(null);
   }
 }

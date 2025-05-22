@@ -9,7 +9,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service.service';
+import { AuthService, User } from '../../services/auth.service.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -49,10 +49,11 @@ export class CadastroComponent implements OnInit {
 
     const { nome, email, password, role } = this.cadastroForm.value;
 
-    // Chama signup com 4 argumentos
+    // Tenta criar a conta via authService
     const success = await this.authService.signup(email, password, nome, role);
 
     if (success) {
+      // Redireciona conforme role
       this.router.navigate([role === 'cliente' ? '/cliente-dashboard' : '/professional-dashboard']);
     } else {
       alert('Erro ao criar conta. Tente novamente.');

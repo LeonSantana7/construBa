@@ -26,7 +26,6 @@ export class ClienteDashboardComponent implements OnInit, OnDestroy {
   showModal = false;
   subscription!: Subscription;
 
- 
   professionalList: Professional[] = [
     { id: 1, name: 'Carlos Oliveira', photoUrl: 'https://randomuser.me/api/portraits/men/45.jpg' },
     { id: 2, name: 'Luana Mendes', photoUrl: 'https://randomuser.me/api/portraits/women/40.jpg' },
@@ -51,28 +50,32 @@ export class ClienteDashboardComponent implements OnInit, OnDestroy {
       date: new FormControl('', Validators.required)
     });
 
-   
     this.subscription = this.serviceRequestService.getRequests().subscribe((requests) => {
+      // filtro pelo cliente — aqui ajusta conforme seu contexto real
       this.serviceRequests = requests.filter(r => r.cliente === 'Cliente Teste');
     });
   }
 
   onSubmitRequest(): void {
     if (this.requestForm.valid) {
+      // Gera um id string único simples (aqui só incrementa)
+      const newId = (this.serviceRequests.length + 1).toString();
+
       const newRequest: ServiceRequest = {
-        id: this.serviceRequests.length + 1,
+        id: newId,
         serviceType: this.requestForm.value.serviceType,
         details: this.requestForm.value.details,
         date: this.requestForm.value.date,
         status: 'Pendente',
         cliente: 'Cliente Teste'
       };
+
       this.serviceRequestService.addRequest(newRequest);
       this.requestForm.reset();
     }
   }
 
-  cancelRequest(id: number): void {
+  cancelRequest(id: string): void {
     const request = this.serviceRequests.find(r => r.id === id);
     if (request && request.status !== 'Cancelado' && request.status !== 'Aprovado') {
       request.status = 'Cancelado';
@@ -116,16 +119,6 @@ export class ClienteDashboardComponent implements OnInit, OnDestroy {
       case 'Cancelado': return 'status-dot dot-red';
       default: return '';
     }
-  }
-
- 
-  get acceptedRequests(): ServiceRequest[] {
-    return this.serviceRequests.filter(r => r.status === 'Aprovado' && r.profissional);
-  }
-
- 
-  getProfessionalEmail(professional: string): string {
-    return professional.replace(/\s+/g, '').toLowerCase() + '@default.com';
   }
 
   ngOnDestroy(): void {
