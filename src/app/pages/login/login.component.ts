@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;
   errorMessage = '';
   showPassword = false;
-  passwordStrength: 'fraca' | 'média' | 'forte' = 'fraca';
   private loginErrorModal: Modal | null = null;
 
   @ViewChild('errorModal') errorModalElementRef!: ElementRef;
@@ -45,10 +44,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       ])
     });
 
-    // Atualiza a força da senha sempre que o valor muda
-    this.loginForm.get('password')?.valueChanges.subscribe(password => {
-      this.passwordStrength = this.calculatePasswordStrength(password);
-    });
+    // Removido o cálculo da força da senha
   }
 
   ngAfterViewInit(): void {
@@ -61,22 +57,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
-  }
-
-  calculatePasswordStrength(password: string): 'fraca' | 'média' | 'forte' {
-    if (!password) return 'fraca';
-
-    const hasLetters = /[a-zA-Z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecials = /[^a-zA-Z0-9]/.test(password);
-
-    if (password.length >= 8 && hasLetters && hasNumbers && hasSpecials) {
-      return 'forte';
-    } else if (password.length >= 6 && hasLetters && hasNumbers) {
-      return 'média';
-    } else {
-      return 'fraca';
-    }
   }
 
   async onSubmit(): Promise<void> {
