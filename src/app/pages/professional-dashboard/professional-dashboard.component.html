@@ -1,15 +1,15 @@
 <div class="container py-4 py-lg-5">
-  <div class="d-flex justify-content-between align-items-center mb-5">
-    <div>
+  <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center mb-4">
+    <div class="mb-3 mb-md-0 text-center text-md-start">
       <h1 class="h3 mb-0 text-dark">Dashboard Profissional</h1>
       <p class="text-muted mb-0">
         Gerencie seus serviços e portfólio, {{ currentProfessionalName }}!
       </p>
     </div>
-    <div class="d-flex align-items-center">
-      <div class="dropdown me-3">
+    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center justify-content-md-end">
+      <div class="dropdown me-sm-3 mb-3 mb-sm-0 w-100 w-sm-auto">
         <button
-          class="btn btn-outline-secondary dropdown-toggle"
+          class="btn btn-outline-secondary dropdown-toggle w-100"
           type="button"
           id="statusFilter"
           data-bs-toggle="dropdown"
@@ -17,7 +17,7 @@
         >
           <i class="fas fa-filter me-2"></i>Filtrar: {{ currentServiceFilter }}
         </button>
-        <ul class="dropdown-menu" aria-labelledby="statusFilter">
+        <ul class="dropdown-menu w-100" aria-labelledby="statusFilter">
           <li><a class="dropdown-item" (click)="setServiceFilter('Todos')" href="javascript:void(0)">Todos</a></li>
           <li><a class="dropdown-item" (click)="setServiceFilter('Pendente')" href="javascript:void(0)">Pendentes</a></li>
           <li><a class="dropdown-item" (click)="setServiceFilter('Aprovado')" href="javascript:void(0)">Aprovados</a></li>
@@ -28,7 +28,7 @@
         </ul>
       </div>
       <button
-        class="btn btn-primary"
+        class="btn btn-primary w-100 w-sm-auto"
         data-bs-toggle="modal"
         data-bs-target="#availabilityModal"
       >
@@ -180,7 +180,9 @@
           </p>
         </div>
       </ng-template>
-    </div> <div class="tab-pane fade" [class.show]="activeTab === 'portfolio'" [class.active]="activeTab === 'portfolio'" id="portfolioTabContent" role="tabpanel" aria-labelledby="portfolio-tab">
+    </div> 
+    
+    <div class="tab-pane fade" [class.show]="activeTab === 'portfolio'" [class.active]="activeTab === 'portfolio'" id="portfolioTabContent" role="tabpanel" aria-labelledby="portfolio-tab">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h4 mb-0 text-dark">Meu Portfólio</h2>
         <button class="btn btn-primary" (click)="openAddPortfolioModal()">
@@ -216,7 +218,9 @@
           </p>
         </div>
       </ng-template>
-    </div> </div> </div>
+    </div> 
+  </div> 
+</div>
 
 <button *ngIf="activeTab === 'portfolio'" class="floating-action-btn bg-primary text-white" (click)="openAddPortfolioModal()" title="Adicionar Projeto ao Portfólio">
   <i class="fas fa-plus" style="font-size: 1.5rem;"></i>
@@ -231,14 +235,21 @@
       </div>
       <div class="modal-body">
         <form>
-          <div class="mb-3"><label class="form-label">Dias da Semana</label>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="monday" checked><label class="form-check-label" for="monday">Segunda</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="tuesday" checked><label class="form-check-label" for="tuesday">Terça</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="wednesday" checked><label class="form-check-label" for="wednesday">Quarta</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="thursday" checked><label class="form-check-label" for="thursday">Quinta</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="friday" checked><label class="form-check-label" for="friday">Sexta</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="saturday"><label class="form-check-label" for="saturday">Sábado</label></div>
-            <div class="form-check"><input class="form-check-input" type="checkbox" id="sunday"><label class="form-check-label" for="sunday">Domingo</label></div>
+          <div class="mb-3">
+            <label class="form-label">Dias da Semana</label>
+            <div class="row"> <div class="col-6 col-sm-4"> <div class="form-check"><input class="form-check-input" type="checkbox" id="monday" checked><label class="form-check-label" for="monday">Segunda</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="tuesday" checked><label class="form-check-label" for="tuesday">Terça</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="wednesday" checked><label class="form-check-label" for="wednesday">Quarta</label></div>
+              </div>
+              <div class="col-6 col-sm-4">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="thursday" checked><label class="form-check-label" for="thursday">Quinta</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="friday" checked><label class="form-check-label" for="friday">Sexta</label></div>
+              </div>
+              <div class="col-6 col-sm-4">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="saturday"><label class="form-check-label" for="saturday">Sábado</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="sunday"><label class="form-check-label" for="sunday">Domingo</label></div>
+              </div>
+            </div>
           </div>
           <div class="row g-3 mb-3">
             <div class="col-md-6"><label for="startTime" class="form-label">Horário Inicial</label><input type="time" class="form-control" id="startTime" value="08:00"></div>
@@ -336,8 +347,8 @@
                 <div *ngIf="!chatTargetRequest"><h6 class="mb-0">Chat</h6></div>
             </div>
             <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;" #chatMessagesContainerProf>
-                  <p class="text-center text-muted p-5">Chat indisponível no momento.</p>
-                  </div>
+                    <p class="text-center text-muted p-5">Chat indisponível no momento.</p>
+                    </div>
             <div class="chat-input p-3 border-top">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Chat indisponível" [(ngModel)]="newMessageProf" (keyup.enter)="sendMessageProf()" [ngModelOptions]="{standalone: true}" disabled>
@@ -346,7 +357,7 @@
                     </button>
                 </div>
             </div>
-        </div>
+          </div>
       </div>
     </div>
   </div>

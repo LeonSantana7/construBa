@@ -73,44 +73,4 @@
             </div>
           </div>
         </div>
-        <hr>
-        <h6 class="text-bahia">Solicitar Orçamento</h6>
-        <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
-          <div class="mb-3">
-            <label for="service-details" class="form-label">Detalhes do Serviço</label>
-            <textarea
-              id="service-details"
-              formControlName="serviceDetails"
-              rows="3"
-              class="form-control"
-              placeholder="Descreva suas necessidades..."
-            ></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="service-location" class="form-label">Localização</label>
-            <input
-              type="text"
-              id="service-location"
-              formControlName="serviceLocation"
-              class="form-control"
-              placeholder="Endereço ou CEP"
-            >
-          </div>
-          <div class="mb-3">
-            <label for="service-date" class="form-label">Data Pretendida</label>
-            <input
-              type="date"
-              id="service-date"
-              formControlName="serviceDate"
-              class="form-control"
-            >
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Solicitar Orçamento</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
+      

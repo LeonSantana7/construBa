@@ -1,36 +1,48 @@
-<div class="container py-5">
-  <h2 class="text-center text-bahia mb-5">Meu Portfólio</h2>
-  
-
+<div class="container py-4 py-lg-5">
   <div class="row g-4">
-    <div class="col-md-4" *ngFor="let item of (portfolioItems$ | async)">
-      <div class="card portfolio-card h-100 shadow-sm">
-        <img [src]="item.imageUrl" class="card-img-top" [alt]="item.title" style="object-fit: cover; height: 200px;">
-        <div class="card-body">
-          <h5 class="card-title text-bahia">{{ item.title }}</h5>
-          <p class="card-text">{{ item.description }}</p>
+    <div class="col-12 mb-4">
+      <h2 class="h4 text-dark">Portfólio do Profissional</h2>
+      <div *ngIf="(portfolioItems$ | async)?.length === 0" class="alert alert-info text-center">
+        Nenhum item no portfólio ainda.
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4" *ngFor="let item of (portfolioItems$ | async)">
+          <div class="card h-100 shadow-sm">
+            <img [src]="item.imageUrl" class="card-img-top" alt="{{ item.title }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.title }}</h5>
+              <p class="card-text text-muted">{{ item.serviceType }} - {{ item.location }}</p>
+              <p class="card-text">{{ item.description }}</p>
+            </div>
+            </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card mt-5 shadow-sm">
-    <div class="card-header bg-bahia text-white">
-      <h4 class="mb-0">Entre em Contato</h4>
-    </div>
-    <div class="card-body">
+    <div class="col-12">
+      <h2 class="h4 text-dark">Entre em Contato com este Profissional</h2>
       <form [formGroup]="contactForm" (ngSubmit)="sendContactMessage()">
         <div class="mb-3">
-          <label class="form-label">Seu Nome</label>
-          <input type="text" formControlName="name" class="form-control" placeholder="Digite seu nome">
+          <label for="name" class="form-label">Nome</label>
+          <input type="text" id="name" formControlName="name" class="form-control">
+          <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="text-danger">
+            Nome é obrigatório.
+          </div>
         </div>
         <div class="mb-3">
-          <label class="form-label">Seu Email</label>
-          <input type="email" formControlName="email" class="form-control" placeholder="Digite seu email">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+          <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="text-danger">
+            <span *ngIf="contactForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+            <span *ngIf="contactForm.get('email')?.errors?.['email']">Email inválido.</span>
+          </div>
         </div>
         <div class="mb-3">
-          <label class="form-label">Mensagem</label>
-          <textarea formControlName="message" class="form-control" rows="4" placeholder="Digite sua mensagem"></textarea>
+          <label for="message" class="form-label">Mensagem</label>
+          <textarea id="message" formControlName="message" class="form-control" rows="5"></textarea>
+          <div *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="text-danger">
+            Mensagem é obrigatória.
+          </div>
         </div>
         <button type="submit" class="btn btn-primary w-100" [disabled]="!contactForm.valid">
           Enviar Mensagem

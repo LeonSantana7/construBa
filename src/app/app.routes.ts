@@ -34,20 +34,19 @@ export const appRoutes: Routes = [
   },
   {
     path: 'cliente-dashboard',
-
     loadComponent: () =>
       import('./pages/cliente-dashboard/cliente-dashboard.component').then(m => m.ClienteDashboardComponent),
   },
   {
     path: 'professional-dashboard',
-
     loadComponent: () =>
       import('./pages/professional-dashboard/professional-dashboard.component').then(m => m.ProfessionalDashboardComponent),
   },
   {
-    path: 'professional-portfolio/:id',
+    
+    path: 'professional-portfolio/:id', 
     loadComponent: () =>
-      import('./pages/professional-portifolio/professional-portifolio.component').then(m => m.ProfessionalPortfolioComponent),
+      import('./pages/professional-portifolio/professional-portifolio.component').then(m => m.ProfessionalPortifolioComponent),
   },
   {
     path: '**',

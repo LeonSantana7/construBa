@@ -1,3 +1,5 @@
+// src/app/services/service-request.service.ts
+
 import { Injectable } from '@angular/core';
 import {
   Firestore,
@@ -12,9 +14,11 @@ import {
   query,
   where,
   orderBy,
-  DocumentReference
+  DocumentReference,
+  arrayUnion // IMPORT NECESSÁRIO para adicionar a um array
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 export interface ServiceRequest {
@@ -25,9 +29,10 @@ export interface ServiceRequest {
   status: 'Pendente' | 'Aprovado' | 'Rejeitado' | 'Cancelado' | 'Concluído' | 'Em Andamento';
   clienteUid: string;
   profissionalUid?: string | null;
-  profissional?: string; 
+  profissional?: string;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
+  profissionaisQueRecusaram?: string[]; // NOVO CAMPO
 }
 
 
@@ -60,13 +65,14 @@ export class ServiceRequestService {
     const q = query(
       this.serviceRequestsCollectionRef,
       where('clienteUid', '==', clienteUid),
-      orderBy('createdAt', 'desc') 
+      orderBy('createdAt', 'desc')
     );
     return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
   }
 
-  addRequest(requestData: Omit<ServiceRequest, 'id'|'createdAt'|'updatedAt'|'status'|'profissionalUid'|'profissional'>): Promise<DocumentReference> {
-    const newRequest = { ...requestData, status: 'Pendente' as const, profissionalUid: null, profissional: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+  // NOVO: Adicionado 'profissionaisQueRecusaram' no tipo e inicializado
+  addRequest(requestData: Omit<ServiceRequest, 'id'|'createdAt'|'updatedAt'|'status'|'profissionalUid'|'profissional'|'profissionaisQueRecusaram'>): Promise<DocumentReference> {
+    const newRequest = { ...requestData, status: 'Pendente' as const, profissionalUid: null, profissional: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp(), profissionaisQueRecusaram: [] };
     return addDoc(this.serviceRequestsCollectionRef, newRequest);
   }
 
@@ -85,14 +91,14 @@ export class ServiceRequestService {
     return deleteDoc(requestDocRef);
   }
 
-
+  // ALTERADO: Este método agora busca TODOS os pendentes. A filtragem por 'profissionaisQueRecusaram' será feita no componente.
   getAllPendingRequests(): Observable<ServiceRequest[]> {
-    console.log('SR_Service (Prof): Buscando TODOS os pedidos PENDENTES (ordenado por createdAt DESC)');
+    console.log('SR_Service (Prof): Buscando TODOS os pedidos PENDENTES para filtragem local (ordenado por createdAt DESC)');
     const q = query(
-    this.serviceRequestsCollectionRef,
-    where('status', '==', 'Pendente'),
-    orderBy('createdAt', 'desc') // DEVE SER 'desc' para bater com o índice
-);
+      this.serviceRequestsCollectionRef,
+      where('status', '==', 'Pendente'),
+      orderBy('createdAt', 'desc')
+    );
     return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
   }
 
@@ -101,16 +107,28 @@ export class ServiceRequestService {
     const q = query(
       this.serviceRequestsCollectionRef,
       where('profissionalUid', '==', professionalUid),
-      orderBy('createdAt', 'desc') // Este índice (profissionalUid ASC, createdAt DESC) foi sugerido para criação
+      orderBy('createdAt', 'desc')
     );
     return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
   }
 
+  // ALTERADO: Ao aceitar, o array de recusas é limpo para este profissional
   acceptRequestByProfessional(requestId: string, professionalUid: string, professionalName: string): Promise<void> {
     const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
-    return updateDoc(requestDocRef, { status: 'Aprovado' as const, profissionalUid: professionalUid, profissional: professionalName, updatedAt: serverTimestamp() });
+    return updateDoc(requestDocRef, { status: 'Aprovado' as const, profissionalUid: professionalUid, profissional: professionalName, updatedAt: serverTimestamp(), profissionaisQueRecusaram: [] });
   }
 
+  // NOVO MÉTODO: Para um profissional recusar um serviço sem mudar seu status geral
+  recusarSolicitacaoApenasParaProfissional(requestId: string, professionalUid: string): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    // Usa arrayUnion para adicionar o UID ao array 'profissionaisQueRecusaram'
+    return updateDoc(requestDocRef, {
+      profissionaisQueRecusaram: arrayUnion(professionalUid),
+      updatedAt: serverTimestamp()
+    });
+  }
+
+  // Mantém este método para mudanças de status que afetam todos (e.g., Concluído, Cancelado, Rejeitado permanentemente)
   updateServiceStatusByProfessional(requestId: string, newStatus: ServiceRequest['status']): Promise<void> {
     const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
     return updateDoc(requestDocRef, { status: newStatus, updatedAt: serverTimestamp() });
@@ -127,7 +145,7 @@ export class ServiceRequestService {
     const q = query(
       this.portfolioItemsCollectionRef,
       where('professionalUid', '==', professionalUid),
-      orderBy('createdAt', 'desc') // Este índice (professionalUid ASC, createdAt DESC) está ATIVO para portfolioItems
+      orderBy('createdAt', 'desc')
     );
     return collectionData(q, { idField: 'id' }) as Observable<PortfolioItem[]>;
   }
