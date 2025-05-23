@@ -32,7 +32,7 @@ export class ProfessionalPortfolioComponent implements OnInit {
 
   sendContactMessage(): void {
     if (this.contactForm.valid) {
-      // Simulação do envio
+   
       console.log('Mensagem recebida:', this.contactForm.value);
       alert('Sua mensagem foi enviada! Em breve, o Profissional Teste entrará em contato.');
       this.contactForm.reset();

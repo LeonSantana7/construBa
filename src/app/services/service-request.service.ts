@@ -1,90 +1,144 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  Firestore,
+  collection,
+  collectionData,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  Timestamp,
+  query,
+  where,
+  orderBy,
+  DocumentReference
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+
 
 export interface ServiceRequest {
-  id: string;
+  id?: string;
   serviceType: string;
   details: string;
-  date: string; // ISO string
-  cliente: string;
+  date: Timestamp;
   status: 'Pendente' | 'Aprovado' | 'Rejeitado' | 'Cancelado' | 'Concluído' | 'Em Andamento';
-  profissional?: string;
+  clienteUid: string;
+  profissionalUid?: string | null;
+  profissional?: string; 
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+
+export interface PortfolioItem {
+  id?: string;
+  professionalUid: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  serviceType: string;
+  location?: string;
+  createdAt?: Timestamp;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceRequestService {
+  private serviceRequestsCollectionRef;
+  private portfolioItemsCollectionRef;
 
-  private requestsSubject = new BehaviorSubject<ServiceRequest[]>([
-    {
-      id: '1',
-      serviceType: 'Eletricista',
-      details: 'Trocar lâmpada',
-      date: new Date().toISOString(),
-      cliente: 'leon@example.com',
-      status: 'Pendente',
-      profissional: undefined
-    }
-    // Você pode adicionar mais dados iniciais aqui
-  ]);
-
-  constructor() {}
-
-  // Observable geral de todas as solicitações
-  getRequests(): Observable<ServiceRequest[]> {
-    return this.requestsSubject.asObservable();
+  constructor(private firestore: Firestore) {
+    this.serviceRequestsCollectionRef = collection(this.firestore, 'serviceRequests');
+    this.portfolioItemsCollectionRef = collection(this.firestore, 'portfolioItems');
   }
 
-  // Filtra solicitações por cliente (atualizado em tempo real)
-  getRequestsByCliente(email: string): Observable<ServiceRequest[]> {
-    return this.requestsSubject.asObservable().pipe(
-      map(requests => requests.filter(req => req.cliente === email))
+
+  getRequestsForClient(clienteUid: string): Observable<ServiceRequest[]> {
+    console.log('SR_Service (Cliente): Buscando pedidos para clienteUid:', clienteUid);
+    const q = query(
+      this.serviceRequestsCollectionRef,
+      where('clienteUid', '==', clienteUid),
+      orderBy('createdAt', 'desc') 
     );
+    return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
   }
 
-  // Filtra solicitações por profissional e status Pendente
-  getRequestsByProfissional(email: string): Observable<ServiceRequest[]> {
-    return this.requestsSubject.asObservable().pipe(
-      map(requests => requests.filter(req => req.profissional === email && req.status === 'Pendente'))
+  addRequest(requestData: Omit<ServiceRequest, 'id'|'createdAt'|'updatedAt'|'status'|'profissionalUid'|'profissional'>): Promise<DocumentReference> {
+    const newRequest = { ...requestData, status: 'Pendente' as const, profissionalUid: null, profissional: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+    return addDoc(this.serviceRequestsCollectionRef, newRequest);
+  }
+
+  updateRequestByClient(requestId: string, dataToUpdate: Partial<Pick<ServiceRequest, 'serviceType'|'details'|'date'>>): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    return updateDoc(requestDocRef, { ...dataToUpdate, updatedAt: serverTimestamp() });
+  }
+
+  updateStatusToCanceled(requestId: string): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    return updateDoc(requestDocRef, { status: 'Cancelado' as const, updatedAt: serverTimestamp() });
+  }
+
+  deleteRequest(requestId: string): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    return deleteDoc(requestDocRef);
+  }
+
+
+  getAllPendingRequests(): Observable<ServiceRequest[]> {
+    console.log('SR_Service (Prof): Buscando TODOS os pedidos PENDENTES (ordenado por createdAt DESC)');
+    const q = query(
+    this.serviceRequestsCollectionRef,
+    where('status', '==', 'Pendente'),
+    orderBy('createdAt', 'desc') // DEVE SER 'desc' para bater com o índice
+);
+    return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
+  }
+
+  getRequestsAssignedToProfessional(professionalUid: string): Observable<ServiceRequest[]> {
+    console.log('SR_Service (Prof): Buscando pedidos ATRIBUÍDOS para professionalUid:', professionalUid);
+    const q = query(
+      this.serviceRequestsCollectionRef,
+      where('profissionalUid', '==', professionalUid),
+      orderBy('createdAt', 'desc') // Este índice (profissionalUid ASC, createdAt DESC) foi sugerido para criação
     );
+    return collectionData(q, { idField: 'id' }) as Observable<ServiceRequest[]>;
   }
 
-  // Adiciona nova solicitação
-  addRequest(newRequest: ServiceRequest): Promise<void> {
-    return new Promise(resolve => {
-      const updated = [...this.requestsSubject.value, newRequest];
-      this.requestsSubject.next(updated);
-      resolve();
-    });
+  acceptRequestByProfessional(requestId: string, professionalUid: string, professionalName: string): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    return updateDoc(requestDocRef, { status: 'Aprovado' as const, profissionalUid: professionalUid, profissional: professionalName, updatedAt: serverTimestamp() });
   }
 
-  // Atualiza uma solicitação existente
-  updateRequest(updated: ServiceRequest): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const requests = this.requestsSubject.value;
-      const index = requests.findIndex(r => r.id === updated.id);
-      if (index === -1) {
-        reject('Solicitação não encontrada');
-        return;
-      }
-      requests[index] = updated;
-      this.requestsSubject.next([...requests]);
-      resolve();
-    });
+  updateServiceStatusByProfessional(requestId: string, newStatus: ServiceRequest['status']): Promise<void> {
+    const requestDocRef = doc(this.firestore, `serviceRequests/${requestId}`);
+    return updateDoc(requestDocRef, { status: newStatus, updatedAt: serverTimestamp() });
   }
 
-  // Remove uma solicitação (opcional)
-  removeRequest(id: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const filtered = this.requestsSubject.value.filter(r => r.id !== id);
-      if (filtered.length === this.requestsSubject.value.length) {
-        reject('Solicitação não encontrada para remoção');
-        return;
-      }
-      this.requestsSubject.next(filtered);
-      resolve();
-    });
+  // --- MÉTODOS PARA PORTFÓLIO ---
+  addPortfolioItem(itemData: Omit<PortfolioItem, 'id' | 'createdAt'>): Promise<DocumentReference> {
+    const newItem = { ...itemData, createdAt: serverTimestamp() };
+    return addDoc(this.portfolioItemsCollectionRef, newItem);
+  }
+
+  getPortfolioForProfessional(professionalUid: string): Observable<PortfolioItem[]> {
+    console.log('SR_Service (Prof): Buscando portfólio para professionalUid:', professionalUid);
+    const q = query(
+      this.portfolioItemsCollectionRef,
+      where('professionalUid', '==', professionalUid),
+      orderBy('createdAt', 'desc') // Este índice (professionalUid ASC, createdAt DESC) está ATIVO para portfolioItems
+    );
+    return collectionData(q, { idField: 'id' }) as Observable<PortfolioItem[]>;
+  }
+
+  updatePortfolioItem(itemId: string, itemData: Partial<Omit<PortfolioItem, 'id' | 'professionalUid' | 'createdAt'>>): Promise<void> {
+    const itemDocRef = doc(this.firestore, `portfolioItems/${itemId}`);
+    return updateDoc(itemDocRef, itemData);
+  }
+
+  deletePortfolioItem(itemId: string): Promise<void> {
+    const itemDocRef = doc(this.firestore, `portfolioItems/${itemId}`);
+    return deleteDoc(itemDocRef);
   }
 }

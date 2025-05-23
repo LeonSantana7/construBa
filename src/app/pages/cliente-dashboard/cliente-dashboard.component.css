@@ -1,3 +1,18 @@
+:root {
+  --primary-color: #2c7be5;
+  --secondary-color: #6c757d;
+  --success-color: #00d97e;
+  --warning-color: #f6c343;
+  --danger-color: #e63757;
+  --light-color: #f8f9fa;
+  --dark-color: #12263f;
+  --alvenaria-color: #6f42c1;
+  --hidraulica-color: #20c997;
+  --eletrica-color: #fd7e14;
+  --reformas-color: #6610f2;
+}
+
+/* Status dots */
 .status-dot {
   display: inline-block;
   width: 12px;
@@ -8,45 +23,205 @@
   animation-duration: 1.2s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  animation-name: blink;
 }
 
-/* Cores e piscar */
 .dot-blue {
-  background-color: #007bff;
+  background-color: var(--primary-color);
   animation-name: blink-blue;
 }
 .dot-green {
-  background-color: #28a745;
+  background-color: var(--success-color);
   animation-name: blink-green;
 }
 .dot-yellow {
-  background-color: #ffc107;
+  background-color: var(--warning-color);
   animation-name: blink-yellow;
 }
 .dot-red {
-  background-color: #dc3545;
+  background-color: var(--danger-color);
   animation-name: blink-red;
 }
-.cliente-card {
-  border-radius: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Adicionando estilos para dot-orange e dot-purple se forem usados pela getStatusDotClass */
+.dot-orange {
+  background-color: #fd7e14; /* Exemplo de cor laranja, ajuste conforme sua paleta */
+  animation-name: blink-orange; /* Crie a animação blink-orange se desejar */
 }
-.cliente-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+.dot-purple {
+  background-color: #6f42c1; /* Exemplo de cor roxa, ajuste conforme sua paleta */
+  animation-name: blink-purple; /* Crie a animação blink-purple se desejar */
 }
+
+
+/* Cards */
 .cliente-card,
+.service-card,
+.professional-card,
 .portfolio-card {
   border-radius: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 4px solid transparent;
 }
 
 .cliente-card:hover,
+.service-card:hover,
+.professional-card:hover,
 .portfolio-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
+/* Classes específicas para tipos de serviço */
+.service-card.alvenaria {
+  border-left-color: var(--alvenaria-color);
+}
+.service-card.hidraulica {
+  border-left-color: var(--hidraulica-color);
+}
+.service-card.eletrica {
+  border-left-color: var(--eletrica-color);
+}
+.service-card.reformas {
+  border-left-color: var(--reformas-color);
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.65rem;
+  border-radius: 50rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-pending {
+  background-color: rgba(246, 195, 67, 0.1); /* Usando warning color */
+  color: var(--warning-color);
+}
+.status-approved {
+  background-color: rgba(0, 217, 126, 0.1);
+  color: var(--success-color);
+}
+.status-in-progress {
+  background-color: rgba(44, 123, 229, 0.1);
+  color: var(--primary-color);
+}
+.status-canceled {
+  background-color: rgba(230, 55, 87, 0.1);
+  color: var(--danger-color);
+}
+/* Adicionando estilos para status-rejected e status-completed */
+.status-rejected {
+  background-color: rgba(253, 126, 20, 0.1); /* Exemplo com cor laranja */
+  color: #fd7e14;
+}
+.status-completed {
+  background-color: rgba(111, 66, 193, 0.1); /* Exemplo com cor roxa */
+  color: #6f42c1;
+}
+
+
+/* Ícones de serviço */
+.service-icon {
+  font-size: 1.5rem; /* Ajuste conforme necessário */
+  margin-right: 0.5rem;
+}
+.service-alvenaria {
+  color: var(--alvenaria-color);
+}
+.service-hidraulica {
+  color: var(--hidraulica-color);
+}
+.service-eletrica {
+  color: var(--eletrica-color);
+}
+.service-reformas {
+  color: var(--reformas-color);
+}
+
+/* Chat */
+.chat-container {
+  /* height: 400px; Removido para usar vh na modal */
+  border-radius: 0.75rem; /* Ajuste se o modal tiver bordas arredondadas */
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.05);
+}
+.chat-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1); /* Para separar do conteúdo do chat */
+}
+.chat-messages {
+  /* height: 300px; Removido, altura gerenciada pelo flex-grow-1 e container pai */
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #f8fafc; /* Um cinza muito claro para o fundo das mensagens */
+}
+.message { /* Estilo base para cada bolha de mensagem */
+  display: flex; /* Usado para alinhar conteúdo interno se necessário */
+  margin-bottom: 1rem;
+  /* max-width está no ngClass agora */
+}
+
+/* Removendo .message-sent e .message-received pois as classes Bootstrap já cuidam disso
+   com 'bg-primary text-white ms-auto' e 'bg-light text-dark me-auto'
+   Se você quiser customizações adicionais além do que o Bootstrap oferece, pode adicioná-las.
+*/
+
+.chat-input {
+  border-top: 1px solid #e9ecef; /* Linha sutil divisória */
+  padding: 1rem;
+  background-color: white;
+}
+
+/* Professional card */
+.professional-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid white; /* Borda para destacar a imagem */
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
+}
+
+/* Progress bar */
+.progress-thin {
+  height: 6px; /* Mais fino que o padrão do Bootstrap */
+  border-radius: 3px; /* Para combinar com a altura */
+}
+
+/* Floating button - REMOVIDO */
+/*
+.floating-action-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0.5rem 1.5rem rgba(18, 38, 63, 0.2);
+  z-index: 1000;
+  background-color: var(--primary-color);
+  color: white;
+}
+*/
+
+/* Animations */
+/* @keyframes pulse - REMOVIDO se apenas o FAB usava */
+/*
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(44, 123, 229, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(44, 123, 229, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(44, 123, 229, 0); }
+}
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+*/
 
 @keyframes blink-blue {
   0%, 100% { opacity: 1; }
@@ -64,23 +239,61 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
+/* Adicionando animações para laranja e roxo se necessário */
+@keyframes blink-orange {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes blink-purple {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
 
-/* Modal backdrop */
+
+/* Empty state */
+.empty-state { /* Estilo para quando não há serviços */
+  padding: 3rem 1rem;
+  text-align: center;
+  background-color: #f8fafc; /* Um fundo leve para destacar */
+  border-radius: 0.75rem;
+}
+.empty-state-icon {
+  font-size: 3rem; /* Ícone maior */
+  color: var(--secondary-color); /* Cor secundária para o ícone */
+  margin-bottom: 1rem;
+}
+
+/* Modal - Garantindo que o z-index do backdrop seja menor que o do modal */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1040;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 1050; 
 }
 
-/* Modal visible */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1050;
+
+
+
+.rating-stars {
+  color: var(--warning-color); 
+}
+
+
+@media (max-width: 768px) {
+  .professional-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .chat-container {
+    height: 70vh; 
+  }
+
+  .chat-messages {
+   
+    height: calc(70vh - 120px);
+  }
 }

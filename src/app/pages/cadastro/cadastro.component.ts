@@ -1,21 +1,17 @@
+
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
-  FormGroup,
-  FormControl,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-  ReactiveFormsModule
+  FormGroup, FormControl, Validators, AbstractControl,
+  ValidationErrors, ValidatorFn, ReactiveFormsModule
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,RouterLink],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
   encapsulation: ViewEncapsulation.None
@@ -23,6 +19,7 @@ import { CommonModule } from '@angular/common';
 export class CadastroComponent implements OnInit {
   cadastroForm!: FormGroup;
   showTermsModal = false;
+  errorMessage: string = '';
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -40,36 +37,40 @@ export class CadastroComponent implements OnInit {
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const formGroup = control as FormGroup;
     return formGroup.get('password')?.value === formGroup.get('confirmPassword')?.value
-      ? null
-      : { mismatch: true };
+      ? null : { mismatch: true };
   };
 
   async onSubmit(): Promise<void> {
-    if (!this.cadastroForm.valid) return;
-
+    if (!this.cadastroForm.valid) {
+      this.cadastroForm.markAllAsTouched();
+      this.errorMessage = "Por favor, corrija os erros no formulário.";
+      return;
+    }
+    this.errorMessage = '';
     const { nome, email, password, role } = this.cadastroForm.value;
 
-    // Tenta criar a conta via authService
-    const success = await this.authService.signup(email, password, nome, role);
+    try {
+    
+      const userId = await this.authService.register(email, password, nome, role);
 
-    if (success) {
-      // Redireciona conforme role
-      this.router.navigate([role === 'cliente' ? '/cliente-dashboard' : '/professional-dashboard']);
-    } else {
-      alert('Erro ao criar conta. Tente novamente.');
+      if (userId) {
+        alert('Cadastro realizado com sucesso!');
+        const targetDashboard = role === 'cliente' ? '/cliente-dashboard' : '/professional-dashboard';
+        this.router.navigate([targetDashboard]);
+      } else {
+        this.errorMessage = 'Erro ao criar conta. Verifique os dados ou tente mais tarde.';
+      }
+    } catch (error: any) {
+      console.error('Erro no cadastro:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        this.errorMessage = 'Este endereço de e-mail já está em uso.';
+      } else {
+        this.errorMessage = 'Ocorreu um erro inesperado durante o cadastro.';
+      }
     }
   }
 
-  navigateTo(page: string): void {
-    this.router.navigate([page]);
-  }
-
-  openTermsModal(event: Event): void {
-    event.preventDefault();
-    this.showTermsModal = true;
-  }
-
-  closeTermsModal(): void {
-    this.showTermsModal = false;
-  }
+  navigateTo(page: string): void { this.router.navigate([page]); }
+  openTermsModal(event: Event): void { event.preventDefault(); this.showTermsModal = true; }
+  closeTermsModal(): void { this.showTermsModal = false; }
 }

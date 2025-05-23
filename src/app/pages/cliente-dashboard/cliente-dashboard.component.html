@@ -1,123 +1,280 @@
-<div class="container py-5">
-  <h2 class="text-center text-bahia mb-5">Dashboard do Cliente</h2>
-
-
-  <div class="card mb-5 shadow-sm">
-    <div class="card-header bg-bahia text-white">
-      <h4 class="mb-0">Solicitar Novo Serviço</h4>
+<div class="container py-4 py-lg-5 bg-light">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h3 mb-0 text-dark">Meus Serviços</h1>
+            <p class="text-muted mb-0">Gerencie suas solicitações de serviço</p>
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="btn btn-primary" (click)="openRequestModal()">
+                <i class="fas fa-plus me-2"></i>Novo Serviço
+            </button>
+        </div>
     </div>
-    <div class="card-body">
-      <form [formGroup]="requestForm" (ngSubmit)="onSubmitRequest()">
-        <div class="mb-3">
-          <label class="form-label">Tipo de Serviço</label>
-          <select formControlName="serviceType" class="form-select">
-            <option value="">Selecione</option>
-            <option value="Alvenaria">Alvenaria</option>
-            <option value="Hidráulica">Hidráulica</option>
-            <option value="Elétrica">Elétrica</option>
-            <option value="Reformas">Reformas</option>
-          </select>
+    
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-white h-100 cliente-card"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Total</h6><h3 class="mb-0">{{serviceRequests.length}}</h3></div><div class="bg-primary bg-opacity-10 p-3 rounded"><i class="fas fa-list text-primary" style="font-size: 1.5rem;"></i></div></div></div></div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Detalhes</label>
-          <textarea formControlName="details" class="form-control" rows="3" placeholder="Digite os detalhes do serviço"></textarea>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-white h-100 cliente-card"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Pendentes</h6><h3 class="mb-0">{{getRequestsByStatus('Pendente').length}}</h3></div><div class="bg-warning bg-opacity-10 p-3 rounded"><i class="fas fa-clock text-warning" style="font-size: 1.5rem;"></i></div></div></div></div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Data</label>
-          <input type="date" formControlName="date" class="form-control" />
+        <div class="col-md-3 mb-3 mb-md-0">
+            <div class="card bg-white h-100 cliente-card"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Em Andamento</h6><h3 class="mb-0">{{getRequestsByStatus('Em Andamento').length}}</h3></div><div class="bg-info bg-opacity-10 p-3 rounded"><i class="fas fa-tools text-info" style="font-size: 1.5rem;"></i></div></div></div></div>
         </div>
-        <button type="submit" class="btn btn-success w-100" [disabled]="!requestForm.valid">Solicitar Serviço</button>
-      </form>
+        <div class="col-md-3">
+            <div class="card bg-white h-100 cliente-card"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Concluídos</h6><h3 class="mb-0">{{getRequestsByStatus('Concluído').length + getRequestsByStatus('Aprovado').length}}</h3></div><div class="bg-success bg-opacity-10 p-3 rounded"><i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i></div></div></div></div>
+        </div>
     </div>
-  </div>
 
-  <!-- Lista de solicitações -->
-  <div class="row g-4 mb-5">
-    <div class="col-lg-4 col-md-6" *ngFor="let request of serviceRequests">
-      <div class="card cliente-card h-100 shadow-sm">
-        <div class="card-header bg-white border-bottom border-bahia">
-          <h5 class="card-title text-bahia">#{{ request.id }} - {{ request.serviceType }}</h5>
-        </div>
-        <div class="card-body">
-          <p class="card-text">{{ request.details }}</p>
-          <p class="card-text"><small class="text-muted"><strong>Data:</strong> {{ request.date }}</small></p>
-          <p class="card-text">
-            <span [ngClass]="getStatusClass(request.status)"></span>
-            <small>{{ request.status }}</small>
-          </p>
-          <p class="card-text"><small class="text-muted"><strong>Profissional:</strong> {{ request.profissional || '---' }}</small></p>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <button class="btn btn-warning btn-sm me-2" (click)="openEditModal(request)"
-                  [disabled]="request.status === 'Cancelado' || request.status === 'Aprovado'">
-            Editar
-          </button>
-          <button class="btn btn-danger btn-sm" (click)="cancelRequest(request.id)"
-                  [disabled]="request.status === 'Cancelado' || request.status === 'Aprovado'">
-            Cancelar
-          </button>
-        </div>
-      </div>
+    <div *ngIf="feedbackMessage"
+         class="alert mt-3 mb-4"
+         [ngClass]="{'alert-success': feedbackMessage.type === 'success', 'alert-danger': feedbackMessage.type === 'error'}"
+         role="alert">
+      {{ feedbackMessage.text }}
+      <button type="button" class="btn-close float-end" (click)="feedbackMessage = null" aria-label="Close"></button>
     </div>
-  </div>
-
-  <!-- Seção do profissional disponível -->
-  <div class="mb-5">
-    <h3 class="text-center text-bahia mb-4">Trabalhos &amp; Contato do Profissional</h3>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-4">
-        <div class="card cliente-card h-100 shadow-sm">
-          <img src="https://img.freepik.com/fotos-premium/retrato-de-jovem-engenheiro-civil-com-capacete-de-seguranca_93675-119969.jpg?ga=GA1.1.645385131.1746643099&semt=ais_hybrid&w=740" alt="Profissional Teste" class="card-img-top"
-               style="object-fit: cover; height:200px; border-top-left-radius:1rem; border-top-right-radius:1rem;">
-          <div class="card-body text-center">
-            <h5 class="card-title text-bahia">Profissional Teste</h5>
-            <p class="card-text">Veja o portfólio e entre em contato para contratar.</p>
-          </div>
-          <div class="card-footer bg-transparent border-0">
-            <a [routerLink]="['/professional-portfolio', 1]" class="btn btn-outline-primary w-100">
-              Ver Portfólio &amp; Contatar
-            </a>
-          </div>
+    
+    <div class="row g-4 mb-5">
+        <div class="col-12" *ngIf="serviceRequests.length === 0 && currentUserUid">
+            <div class="card">
+                <div class="card-body text-center p-lg-5">
+                    <div class="empty-state-icon display-4 text-primary mb-3"><i class="fas fa-clipboard-list"></i></div>
+                    <h4 class="mb-2">Nenhum serviço solicitado</h4>
+                    <p class="text-muted mb-4">Você ainda não fez nenhuma solicitação. Clique no botão "Novo Serviço" para começar.</p>
+                    <button class="btn btn-primary" (click)="openRequestModal()"><i class="fas fa-plus me-2"></i>Solicitar Serviço</button>
+                </div>
+            </div>
         </div>
-      </div>
+         <div class="col-12 text-center" *ngIf="!currentUserUid">
+            <p class="text-muted">Carregando dados do usuário...</p>
+            </div>
+        
+        <div class="col-lg-6" *ngFor="let request of serviceRequests">
+            <div class="card service-card h-100 bg-white shadow-sm {{getServiceClass(request.serviceType)}}">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-primary bg-opacity-10 text-primary mb-2">#{{request.id?.substring(0, 8)}}</span>
+                            <h5 class="mb-1 card-title">
+                                <i class="fas {{getServiceIcon(request.serviceType)}} service-icon {{getServiceIconClass(request.serviceType)}} me-2"></i>
+                                {{request.serviceType}}
+                            </h5>
+                            <p class="text-muted mb-2 card-text small">{{request.details | slice:0:100}}{{request.details.length > 100 ? '...' : ''}}</p>
+                        </div>
+                        <div>
+                            <span class="badge rounded-pill {{getStatusBadgeClass(request.status)}}">
+                                <span class="status-dot {{getStatusDotClass(request.status)}} me-1"></span>
+                                {{request.status}}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <p class="mb-1 text-muted small"><i class="fas fa-calendar-alt me-2"></i>Data: {{request.date.toDate() | date:'dd/MM/yyyy'}}</p>
+                        </div>
+                        <div class="col-sm-6">
+                             <p class="mb-0 text-muted small"><i class="fas fa-user-tie me-2"></i>Profissional: {{request.profissional || 'Aguardando...'}}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="progress progress-thin mb-3" style="height: 5px;">
+                        <div class="progress-bar {{getProgressBarClass(request.status)}}" role="progressbar"
+                             [style.width]="getProgressWidth(request.status)"
+                             [attr.aria-valuenow]="getProgressWidth(request.status).replace('%','')"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <button class="btn btn-sm btn-outline-primary" 
+                                [disabled]="true" (click)="openChatModal(request)">
+                            <i class="fas fa-comments me-1"></i> Chat (Indisponível)
+                        </button>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary me-2" 
+                                    [disabled]="request.status === 'Cancelado' || request.status === 'Aprovado' || request.status === 'Concluído'"
+                                    (click)="openEditModal(request)">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </button>
+                            
+                            <button class="btn btn-sm btn-outline-warning me-2"
+                                    *ngIf="request.status !== 'Cancelado' && request.status !== 'Aprovado' && request.status !== 'Concluído'"
+                                    (click)="cancelServiceRequest(request)">
+                                <i class="fas fa-ban me-1"></i> Cancelar
+                            </button>
+                            
+                            <button class="btn btn-sm btn-outline-danger"
+                                    *ngIf="request.status === 'Cancelado'"
+                                    (click)="initiatePermanentDelete(request)">
+                                <i class="fas fa-trash me-1"></i> Apagar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+<div class="modal fade" id="requestServiceModal" tabindex="-1" aria-labelledby="requestServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="requestServiceModalLabel">Solicitar Novo Serviço</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeGenericModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="requestForm" (ngSubmit)="onSubmitRequest()">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="serviceType" class="form-label">Tipo de Serviço</label>
+                            <select class="form-select" id="serviceType" formControlName="serviceType" required>
+                                <option value="" selected disabled>Selecione um serviço</option>
+                                <option value="Alvenaria">Alvenaria</option><option value="Hidráulica">Hidráulica</option>
+                                <option value="Elétrica">Elétrica</option><option value="Reformas">Reformas</option>
+                            </select>
+                            <div *ngIf="requestForm.get('serviceType')?.touched && requestForm.get('serviceType')?.hasError('required')" class="text-danger mt-1 small">Tipo de serviço é obrigatório.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="serviceDate" class="form-label">Data Desejada</label>
+                            <input type="date" class="form-control" id="serviceDate" formControlName="date" required [min]="minDate">
+                            <div *ngIf="requestForm.get('date')?.touched && requestForm.get('date')?.hasError('required')" class="text-danger mt-1 small">Data é obrigatória.</div>
+                            <div *ngIf="requestForm.get('date')?.touched && requestForm.get('date')?.hasError('dateInPast')" class="text-danger mt-1 small">A data não pode ser anterior ao dia de hoje.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="serviceDetails" class="form-label">Detalhes do Serviço</label>
+                            <textarea class="form-control" id="serviceDetails" rows="4" formControlName="details" placeholder="Descreva com detalhes o serviço que você precisa" required></textarea>
+                            <div *ngIf="requestForm.get('details')?.touched && requestForm.get('details')?.hasError('required')" class="text-danger mt-1 small">Detalhes são obrigatórios.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3 border-top pt-3">
+                        <button type="button" class="btn btn-secondary" (click)="closeGenericModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="!requestForm.valid">Enviar Solicitação</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Modal de edição -->
-<div class="modal-backdrop fade show" *ngIf="showModal" (click)="closeModal()"></div>
-<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1" role="dialog" aria-modal="true">
+<div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editServiceModalLabel">Editar Solicitação</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeGenericModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="editServiceType" class="form-label">Tipo de Serviço</label>
+                            <select class="form-select" id="editServiceType" formControlName="serviceType" required>
+                                <option value="Alvenaria">Alvenaria</option><option value="Hidráulica">Hidráulica</option>
+                                <option value="Elétrica">Elétrica</option><option value="Reformas">Reformas</option>
+                            </select>
+                             <div *ngIf="editForm.get('serviceType')?.touched && editForm.get('serviceType')?.hasError('required')" class="text-danger mt-1 small">Tipo de serviço é obrigatório.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editServiceDate" class="form-label">Data Desejada</label>
+                            <input type="date" class="form-control" id="editServiceDate" formControlName="date" required [min]="minDate">
+                            <div *ngIf="editForm.get('date')?.touched && editForm.get('date')?.hasError('required')" class="text-danger mt-1 small">Data é obrigatória.</div>
+                            <div *ngIf="editForm.get('date')?.touched && editForm.get('date')?.hasError('dateInPast')" class="text-danger mt-1 small">A data não pode ser anterior ao dia de hoje.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="editServiceDetails" class="form-label">Detalhes do Serviço</label>
+                            <textarea class="form-control" id="editServiceDetails" rows="4" formControlName="details" required></textarea>
+                             <div *ngIf="editForm.get('details')?.touched && editForm.get('details')?.hasError('required')" class="text-danger mt-1 small">Detalhes são obrigatórios.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3 border-top pt-3">
+                        <button type="button" class="btn btn-secondary" (click)="closeGenericModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="chatModalLabel">Chat com o Profissional</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeGenericModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="chat-container d-flex flex-column" style="height: 60vh;">
+                    <div class="chat-header p-3 d-flex align-items-center border-bottom">
+                        <img [src]="selectedProfessional?.photoUrl || 'https://via.placeholder.com/40/007bff/ffffff?text=P'" 
+                             alt="Profissional" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                        <div>
+                            <h6 class="mb-0">{{selectedProfessional?.name || 'Profissional'}}</h6>
+                            <small class="text-white-50">Online</small>
+                        </div>
+                    </div>
+                    <div class="chat-messages flex-grow-1 p-3" #chatMessagesContainer style="overflow-y: auto;">
+                        <div *ngFor="let message of chatMessagesList" 
+                             class="message mb-3 d-flex" 
+                             [ngClass]="{'flex-row-reverse': message.isUser}">
+                            <div class="p-2 rounded shadow-sm"
+                                 [ngClass]="{'bg-primary text-white ms-auto': message.isUser, 'bg-light text-dark me-auto': !message.isUser}"
+                                 style="max-width: 75%;">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="fw-bold" *ngIf="!message.isUser">{{message.sender}}</small>
+                                    <small class="text-muted small" [ngClass]="{'text-white-50': message.isUser, 'text-black-50': !message.isUser}">{{message.time}}</small>
+                                </div>
+                                <p class="mb-0 text-break">{{message.text}}</p>
+                            </div>
+                        </div>
+                         <p *ngIf="!chatMessagesList || chatMessagesList.length === 0" class="text-center text-muted p-4">
+                            Nenhuma mensagem ainda. Comece a conversa!
+                        </p>
+                    </div>
+                    <div class="chat-input p-3 border-top">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Digite sua mensagem..." 
+                                   [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" [ngModelOptions]="{standalone: true}">
+                            <button class="btn btn-primary" type="button" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+                                <i class="fas fa-paper-plane"></i> Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="professionalModal" tabindex="-1" aria-labelledby="professionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="professionalModalLabel">Perfil do Profissional</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeGenericModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeGenericModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
-        <div class="modal-header bg-bahia text-white">
-          <h5 class="modal-title">Editar Solicitação</h5>
-          <button type="button" class="btn-close btn-close-white" (click)="closeModal()" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Tipo de Serviço</label>
-            <select formControlName="serviceType" class="form-select">
-              <option value="Alvenaria">Alvenaria</option>
-              <option value="Hidráulica">Hidráulica</option>
-              <option value="Elétrica">Elétrica</option>
-              <option value="Reformas">Reformas</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Detalhes</label>
-            <textarea formControlName="details" class="form-control" rows="3"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Data</label>
-            <input type="date" formControlName="date" class="form-control" />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">Salvar</button>
-        </div>
-      </form>
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmar Exclusão Permanente</h5>
+        <button type="button" class="btn-close" (click)="closeDeleteConfirmationModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja apagar este serviço permanentemente? Esta ação não pode ser desfeita.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteConfirmationModal()">Não, manter</button>
+        <button type="button" class="btn btn-danger" (click)="confirmPermanentDelete()">Sim, apagar</button>
+      </div>
     </div>
   </div>
 </div>

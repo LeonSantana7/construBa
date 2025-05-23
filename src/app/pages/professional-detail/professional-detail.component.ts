@@ -23,10 +23,10 @@ interface ChatMessage {
   styleUrls: ['./professional-detail.component.css']
 })
 export class ProfessionalDetailComponent {
-  // Aba ativa: "portfolio" ou "chat"
+  
   activeTab: 'portfolio' | 'chat' = 'portfolio';
 
-  // Dados simulados do profissional
+
   professional = {
     name: 'Pedro Silva',
     bio: 'Mestre de obras com 15 anos de experiência, especializado em alvenaria estrutural e acabamentos finos.',
@@ -39,19 +39,19 @@ export class ProfessionalDetailComponent {
     ]
   };
 
-  // Simula mensagens do chat
+
   chatMessages: ChatMessage[] = [
     { sender: 'Cliente Teste', content: 'Olá, gostaria de saber mais sobre seu portfólio.', timestamp: new Date() },
     { sender: this.professional.name, content: 'Claro, posso lhe mostrar os detalhes. Qual projeto lhe chamou atenção?', timestamp: new Date() }
   ];
   newChatMessage: string = '';
 
-  // Controle da aba ativa
+ 
   setActiveTab(tab: 'portfolio' | 'chat'): void {
     this.activeTab = tab;
   }
 
-  // Envia uma mensagem (simulação)
+ 
   sendMessage(): void {
     if (this.newChatMessage.trim()) {
       this.chatMessages.push({
@@ -63,12 +63,12 @@ export class ProfessionalDetailComponent {
     }
   }
 
-  // Função de 'contratação' que aciona o chat para contato ou outra ação
+ 
   contratar(): void {
     alert(`Você está contratando ${this.professional.name}. Um representante entrará em contato em breve!`);
   }
 
-  // Função para gerar um link "mailto:" com o e-mail do profissional (com base no nome)
+  
   getProfessionalEmail(): string {
     return this.professional.name.replace(/\s+/g, '').toLowerCase() + '@default.com';
   }

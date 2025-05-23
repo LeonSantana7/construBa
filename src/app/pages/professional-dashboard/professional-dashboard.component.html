@@ -1,62 +1,352 @@
-<div class="container py-5">
-  <h2 class="text-center text-bahia mb-5">Dashboard do Profissional</h2>
+<div class="container py-4 py-lg-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <h1 class="h3 mb-0 text-dark">Dashboard Profissional</h1>
+      <p class="text-muted mb-0">
+        Gerencie seus serviços e portfólio, {{ currentProfessionalName }}!
+      </p>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="dropdown me-3">
+        <button
+          class="btn btn-outline-secondary dropdown-toggle"
+          type="button"
+          id="statusFilter"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-filter me-2"></i>Filtrar: {{ currentServiceFilter }}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="statusFilter">
+          <li><a class="dropdown-item" (click)="setServiceFilter('Todos')" href="javascript:void(0)">Todos</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Pendente')" href="javascript:void(0)">Pendentes</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Aprovado')" href="javascript:void(0)">Aprovados</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Em Andamento')" href="javascript:void(0)">Em Andamento</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Concluído')" href="javascript:void(0)">Concluídos</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Cancelado')" href="javascript:void(0)">Cancelados</a></li>
+          <li><a class="dropdown-item" (click)="setServiceFilter('Rejeitado')" href="javascript:void(0)">Rejeitados</a></li>
+        </ul>
+      </div>
+      <button
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#availabilityModal"
+      >
+        <i class="fas fa-calendar-alt me-2"></i>Disponibilidade
+      </button>
+    </div>
+  </div>
 
-  <ul class="nav nav-tabs justify-content-center mb-4">
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab==='solicitacoes'" (click)="setActiveTab('solicitacoes')" style="cursor:pointer;">Solicitações</a>
+  <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        [class.active]="activeTab === 'servicos'"
+        (click)="setActiveTab('servicos')"
+        id="services-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#servicesTabContent"
+        type="button"
+        role="tab"
+        aria-controls="servicesTabContent"
+        [attr.aria-selected]="activeTab === 'servicos'"
+      >
+        <i class="fas fa-tools me-2"></i>Serviços
+      </button>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab==='portfolio'" (click)="setActiveTab('portfolio')" style="cursor:pointer;">Meu Portfólio</a>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        [class.active]="activeTab === 'portfolio'"
+        (click)="setActiveTab('portfolio')"
+        id="portfolio-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#portfolioTabContent"
+        type="button"
+        role="tab"
+        aria-controls="portfolioTabContent"
+        [attr.aria-selected]="activeTab === 'portfolio'"
+      >
+        <i class="fas fa-images me-2"></i>Portfólio
+      </button>
     </li>
   </ul>
 
-  <div class="tab-content">
+  <div
+    *ngIf="feedbackMessage"
+    class="alert position-fixed bottom-0 end-0 m-3 shadow-lg"
+    style="z-index: 1100"
+    [ngClass]="{
+      'alert-success': feedbackMessage.type === 'success',
+      'alert-danger': feedbackMessage.type === 'error'
+    }"
+    role="alert"
+  >
+    {{ feedbackMessage.text }}
+    <button
+      type="button"
+      class="btn-close ms-2"
+      (click)="feedbackMessage = null"
+      aria-label="Close"
+    ></button>
+  </div>
 
-    <div class="tab-pane fade" [class.show]="activeTab==='solicitacoes'" [class.active]="activeTab==='solicitacoes'">
-      <div class="row g-4">
-        <div class="col-lg-4 col-md-6" *ngFor="let request of serviceRequests">
-          <div class="card professional-card h-100 shadow-sm">
-            <div class="card-header bg-bahia text-white">
-              <h5 class="card-title mb-0">{{ request.serviceType }}</h5>
+  <div class="tab-content" id="dashboardTabsContent">
+    <div
+      class="tab-pane fade"
+      [class.show]="activeTab === 'servicos'"
+      [class.active]="activeTab === 'servicos'"
+      id="servicesTabContent"
+      role="tabpanel"
+      aria-labelledby="services-tab"
+    >
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3 mb-md-0"><div class="card bg-white h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Pendentes</h6><h3 class="mb-0">{{getRequestsByStatusCount('Pendente')}}</h3></div><div class="bg-warning bg-opacity-10 p-3 rounded"><i class="fas fa-clock text-warning" style="font-size: 1.5rem;"></i></div></div></div></div></div>
+        <div class="col-md-3 mb-3 mb-md-0"><div class="card bg-white h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Em Andamento</h6><h3 class="mb-0">{{getRequestsByStatusCount('Em Andamento')}}</h3></div><div class="bg-primary bg-opacity-10 p-3 rounded"><i class="fas fa-tools text-primary" style="font-size: 1.5rem;"></i></div></div></div></div></div>
+        <div class="col-md-3 mb-3 mb-md-0"><div class="card bg-white h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Concluídos</h6><h3 class="mb-0">{{getRequestsByStatusCount('Concluído')}}</h3></div><div class="bg-success bg-opacity-10 p-3 rounded"><i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i></div></div></div></div></div>
+        <div class="col-md-3"><div class="card bg-white h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><div><h6 class="text-uppercase text-muted mb-2">Sua Avaliação</h6><h3 class="mb-0">N/A</h3></div><div class="bg-info bg-opacity-10 p-3 rounded"><i class="fas fa-star text-info" style="font-size: 1.5rem;"></i></div></div></div></div></div>
+      </div>
+      
+      <div class="row g-4" *ngIf="filteredServiceRequests.length > 0; else noServicesProf">
+        <div class="col-lg-6" *ngFor="let request of filteredServiceRequests">
+          <div class="card professional-card h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <span class="badge bg-dark bg-opacity-10 text-dark mb-2">#{{request.id?.substring(0,8)}}</span>
+                  <h5 class="mb-1 card-title">
+                    <i class="fas {{getServiceIcon(request.serviceType)}} service-icon {{getServiceClass(request.serviceType)}} me-1"></i>
+                    {{request.serviceType}}
+                  </h5>
+                  <p class="text-muted mb-2 small">{{request.details | slice:0:100}}{{request.details.length > 100 ? '...' : ''}}</p>
+                </div>
+                <div>
+                    <span class="badge rounded-pill {{getStatusBadgeClass(request.status)}}">
+                      <span class="status-dot {{getStatusDotClass(request.status)}} me-1"></span>{{request.status}}
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3 small text-muted">
+                <div>
+                  <p class="mb-1"><i class="fas fa-calendar-alt me-2"></i>Data Agendada: {{ request.date.toDate() | date:'dd/MM/yyyy' }}</p>
+                  <p class="mb-0"><i class="fas fa-user me-2"></i>Cliente UID: {{ request.clienteUid | slice:0:10 }}...</p>
+                </div>
+                <div class="text-end">
+                  <p class="mb-1"><small>Solicitado: {{ request.createdAt?.toDate() | date:'dd/MM/yy HH:mm' }}</small></p>
+                    <div *ngIf="request.status === 'Em Andamento'" class="progress mt-1" style="height: 6px;">
+                      <div class="progress-bar {{getProgressBarClass(request.status)}}" role="progressbar" 
+                            [style.width]="getProgressWidth(request.status)" 
+                            [attr.aria-valuenow]="getProgressWidth(request.status).replace('%','')" 
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+                <div class="mt-auto d-flex justify-content-between">
+                <button class="btn btn-sm btn-outline-primary" 
+                        [disabled]="true" (click)="openChatModal(request)">
+                    <i class="fas fa-comments me-1"></i> Chat (Indisponível)
+                </button>
+                <div>
+                  <ng-container *ngIf="request.status === 'Pendente'">
+                    <button class="btn btn-sm btn-success me-2" (click)="aceitarSolicitacao(request)">
+                      <i class="fas fa-check me-1"></i> Aceitar
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="recusarSolicitacao(request)">
+                      <i class="fas fa-times me-1"></i> Recusar
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="request.status === 'Aprovado' || request.status === 'Em Andamento'">
+                    <button class="btn btn-sm btn-primary me-2" (click)="openUpdateStatusModal(request)">
+                      <i class="fas fa-sync-alt me-1"></i> Atualizar Status
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="cancelarServicoPeloProfissional(request)">
+                      <i class="fas fa-times me-1"></i> Cancelar Serviço
+                    </button>
+                  </ng-container>
+                    <ng-container *ngIf="request.status === 'Concluído' || request.status === 'Cancelado' || request.status === 'Rejeitado'">
+                    <span class="text-muted small fst-italic">Nenhuma ação principal</span>
+                  </ng-container>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <p class="card-text">{{ request.details }}</p>
-              <p class="card-text"><small class="text-muted"><strong>Data:</strong> {{ request.date }}</small></p>
-              <p class="card-text"><small class="text-muted"><strong>Cliente:</strong> {{ request.cliente }}</small></p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noServicesProf>
+        <div class="text-center p-5">
+          <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+          <p class="text-muted">
+            Nenhum serviço encontrado para o filtro "{{ currentServiceFilter }}" ou você ainda não possui serviços.
+          </p>
+        </div>
+      </ng-template>
+    </div> <div class="tab-pane fade" [class.show]="activeTab === 'portfolio'" [class.active]="activeTab === 'portfolio'" id="portfolioTabContent" role="tabpanel" aria-labelledby="portfolio-tab">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0 text-dark">Meu Portfólio</h2>
+        <button class="btn btn-primary" (click)="openAddPortfolioModal()">
+          <i class="fas fa-plus me-2"></i>Adicionar Projeto
+        </button>
+      </div>
+      <div class="row g-4" *ngIf="portfolioItems.length > 0; else noPortfolioItems">
+        <div class="col-md-6 col-lg-4" *ngFor="let item of portfolioItems">
+          <div class="card h-100 portfolio-card">
+            <img [src]="item.imageUrl" class="card-img-top portfolio-img" [alt]="item.title" style="height: 200px; object-fit: cover; cursor: pointer;" (click)="openEditPortfolioModal(item)">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ item.title }}</h5>
+              <p class="card-text text-muted small flex-grow-1">{{ item.description | slice : 0 : 100 }}{{item.description && item.description.length > 100 ? "..." : ""}}</p>
+              <p class="card-text text-muted small mb-1"><i class="fas fa-tag me-1"></i> {{item.serviceType}}</p>
+              <p class="card-text text-muted small" *ngIf="item.location"><i class="fas fa-map-marker-alt me-1"></i> {{item.location}}</p>
             </div>
-            <div class="card-footer bg-transparent border-0">
-              <button class="btn btn-success w-100" (click)="aceitarSolicitacao(request.id)" [disabled]="request.status !== 'Pendente'">
-                Aceitar Solicitação
+            <div class="card-footer bg-transparent border-0 text-center">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditPortfolioModal(item)">
+                <i class="fas fa-edit me-1"></i> Editar
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deletePortfolioItem(item.id!)">
+                <i class="fas fa-trash me-1"></i> Remover
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="tab-pane fade" [class.show]="activeTab==='portfolio'" [class.active]="activeTab==='portfolio'">
-      <div class="row g-4 mb-4">
-        <div class="col-md-4" *ngFor="let item of portfolio">
-          <div class="card h-100 shadow-sm">
-            <img [src]="item.imageUrl" class="card-img-top" [alt]="item.title">
-            <div class="card-body">
-              <h5 class="card-title text-bahia">{{ item.title }}</h5>
-            </div>
-          </div>
+      <ng-template #noPortfolioItems>
+        <div class="text-center p-5">
+          <i class="fas fa-image fa-3x text-muted mb-3"></i>
+          <p class="text-muted">
+            Seu portfólio está vazio. Adicione seus projetos!
+          </p>
         </div>
+      </ng-template>
+    </div> </div> </div>
+
+<button *ngIf="activeTab === 'portfolio'" class="floating-action-btn bg-primary text-white" (click)="openAddPortfolioModal()" title="Adicionar Projeto ao Portfólio">
+  <i class="fas fa-plus" style="font-size: 1.5rem;"></i>
+</button>
+
+<div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="availabilityModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="availabilityModalLabel">Minha Disponibilidade</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" (click)="closeCurrentModal()"></button>
       </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3"><label class="form-label">Dias da Semana</label>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="monday" checked><label class="form-check-label" for="monday">Segunda</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="tuesday" checked><label class="form-check-label" for="tuesday">Terça</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="wednesday" checked><label class="form-check-label" for="wednesday">Quarta</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="thursday" checked><label class="form-check-label" for="thursday">Quinta</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="friday" checked><label class="form-check-label" for="friday">Sexta</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="saturday"><label class="form-check-label" for="saturday">Sábado</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="sunday"><label class="form-check-label" for="sunday">Domingo</label></div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><label for="startTime" class="form-label">Horário Inicial</label><input type="time" class="form-control" id="startTime" value="08:00"></div>
+            <div class="col-md-6"><label for="endTime" class="form-label">Horário Final</label><input type="time" class="form-control" id="endTime" value="18:00"></div>
+          </div>
+          <div class="mb-3"><label class="form-label">Áreas de Atendimento</label><select class="form-select" multiple><option selected>Pelourinho</option><option selected>Barra</option><option selected>Rio Vermelho</option><option>Ondina</option><option>Itapuã</option><option>Stella Maris</option><option>Cabula</option><option>Amaralina</option></select></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCurrentModal()">Fechar</button>
+        <button type="button" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <div class="card p-3 shadow-sm">
-        <h5 class="text-bahia mb-3">Adicionar Novo Projeto</h5>
-        <div class="mb-2">
-          <input type="text" [(ngModel)]="newPortfolioTitle" placeholder="Título do Projeto" class="form-control">
+<div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="updateStatusModalLabel">Atualizar Status</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeCurrentModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="requestToUpdate">
+        <form [formGroup]="updateStatusForm" (ngSubmit)="submitUpdateStatus()">
+          <div class="mb-3"><p>Serviço: <strong>{{requestToUpdate.serviceType}}</strong> (#{{requestToUpdate.id?.substring(0,8)}})</p></div>
+          <div class="mb-3">
+            <label for="newStatusProf" class="form-label">Novo Status <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="newStatus" id="newStatusProf">
+              <option value="" disabled>Selecione...</option>
+              <option value="Em Andamento" *ngIf="requestToUpdate.status === 'Aprovado'">Em Andamento</option>
+              <option value="Concluído" *ngIf="requestToUpdate.status === 'Em Andamento' || requestToUpdate.status === 'Aprovado'">Concluído</option>
+            </select>
+            <div *ngIf="updateStatusForm.get('newStatus')?.touched && updateStatusForm.get('newStatus')?.invalid" class="text-danger small mt-1">Selecione um novo status.</div>
+          </div>
+          <div class="mb-3" *ngIf="updateStatusForm.get('newStatus')?.value === 'Em Andamento'">
+            <label for="progressProf" class="form-label">Progresso (%)</label>
+            <input type="range" class="form-range" formControlName="progress" id="progressProf" min="0" max="100" step="5">
+            <div class="d-flex justify-content-between"><small>0%</small> <small>{{updateStatusForm.get('progress')?.value}}%</small> <small>100%</small></div>
+          </div>
+          <div class="mb-3">
+            <label for="statusDetailsProf" class="form-label">Detalhes (Opcional)</label>
+            <textarea class="form-control" formControlName="statusDetails" id="statusDetailsProf" rows="3" placeholder="Ex: Peças encomendadas..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCurrentModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="submitUpdateStatus()" [disabled]="updateStatusForm.invalid">Atualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="portfolioModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="portfolioModalLabel">{{editingPortfolioItem ? 'Editar' : 'Adicionar'}} Projeto</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeCurrentModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="portfolioForm" (ngSubmit)="submitPortfolioItem()">
+          <div class="row g-3">
+            <div class="col-md-12"><label for="projectTitle" class="form-label">Título <span class="text-danger">*</span></label><input type="text" class="form-control" id="projectTitle" formControlName="title" placeholder="Ex: Reforma de Banheiro"><div *ngIf="portfolioForm.get('title')?.touched && portfolioForm.get('title')?.hasError('required')" class="text-danger small mt-1">Título é obrigatório.</div></div>
+            <div class="col-md-6"><label for="projectServiceType" class="form-label">Tipo <span class="text-danger">*</span></label><select class="form-select" id="projectServiceType" formControlName="serviceType"><option value="" disabled>Selecione</option><option value="Alvenaria">Alvenaria</option><option value="Hidráulica">Hidráulica</option><option value="Elétrica">Elétrica</option><option value="Reformas">Reformas</option><option value="Pintura">Pintura</option><option value="Outro">Outro</option></select><div *ngIf="portfolioForm.get('serviceType')?.touched && portfolioForm.get('serviceType')?.hasError('required')" class="text-danger small mt-1">Tipo é obrigatório.</div></div>
+            <div class="col-md-6"><label for="projectLocation" class="form-label">Local</label><input type="text" class="form-control" id="projectLocation" formControlName="location" placeholder="Ex: Pituba, Salvador-BA"></div>
+            <div class="col-12"><label for="projectDescription" class="form-label">Descrição</label><textarea class="form-control" id="projectDescription" formControlName="description" rows="3" placeholder="Descreva o projeto..."></textarea></div>
+            <div class="col-12"><label for="projectImageUrl" class="form-label">URL da Imagem <span class="text-danger">*</span></label><input type="url" class="form-control" id="projectImageUrl" formControlName="imageUrl" placeholder="https://exemplo.com/imagem.jpg"><div *ngIf="portfolioForm.get('imageUrl')?.touched && portfolioForm.get('imageUrl')?.invalid" class="text-danger small mt-1"><span *ngIf="portfolioForm.get('imageUrl')?.errors?.['required']">URL é obrigatória.</span><span *ngIf="portfolioForm.get('imageUrl')?.errors?.['pattern']">URL inválida.</span></div><img *ngIf="portfolioForm.get('imageUrl')?.valid && portfolioForm.get('imageUrl')?.value" [src]="portfolioForm.get('imageUrl')?.value" alt="Prévia" class="img-thumbnail mt-2" style="max-height: 150px;"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCurrentModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" (click)="submitPortfolioItem()" [disabled]="portfolioForm.invalid">{{editingPortfolioItem ? 'Salvar' : 'Adicionar'}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="chatModalProf" tabindex="-1" aria-labelledby="chatModalProfLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="chatModalProfLabel">Chat com Cliente</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeCurrentModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+          <div class="chat-container d-flex flex-column" style="height: 60vh;">
+            <div class="chat-header p-3 d-flex align-items-center border-bottom">
+                <div *ngIf="chatTargetRequest">
+                    <h6 class="mb-0">Serviço: {{chatTargetRequest.serviceType}} (#{{chatTargetRequest.id?.substring(0,8)}})</h6>
+                    <small class="text-white-50">Cliente UID: {{chatTargetRequest.clienteUid | slice:0:10}}...</small>
+                </div>
+                <div *ngIf="!chatTargetRequest"><h6 class="mb-0">Chat</h6></div>
+            </div>
+            <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;" #chatMessagesContainerProf>
+                  <p class="text-center text-muted p-5">Chat indisponível no momento.</p>
+                  </div>
+            <div class="chat-input p-3 border-top">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Chat indisponível" [(ngModel)]="newMessageProf" (keyup.enter)="sendMessageProf()" [ngModelOptions]="{standalone: true}" disabled>
+                    <button class="btn btn-primary" type="button" (click)="sendMessageProf()" [disabled]="true">
+                        <i class="fas fa-paper-plane"></i> Enviar
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="mb-2">
-          <input type="text" [(ngModel)]="newPortfolioImageUrl" placeholder="URL da Imagem" class="form-control">
-        </div>
-        <button class="btn btn-primary w-100" (click)="addPortfolioItem()" [disabled]="!newPortfolioTitle || !newPortfolioImageUrl">
-          Adicionar Projeto
-        </button>
       </div>
     </div>
   </div>

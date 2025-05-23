@@ -1,97 +1,87 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, UserCredential } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import {
+  Auth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  authState,
+  User as FirebaseUser,
+  updateProfile
+} from '@angular/fire/auth';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Observable, of, from } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
-export interface User {
+export interface User { 
   uid: string;
-  email: string;
-  role: 'cliente' | 'profissional';
-  name: string;
+  email: string | null;
+  name?: string | null;
+  role?: 'cliente' | 'profissional';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
+  public user$: Observable<User | null>; 
 
-  constructor(private auth: Auth, private firestore: Firestore) {
-    onAuthStateChanged(this.auth, async fbUser => {
-      if (!fbUser) {
-        this.userSubject.next(null);
-        return;
-      }
+  constructor(
+    private afAuth: Auth,
+    private firestore: Firestore
+  ) {
+    this.user$ = authState(this.afAuth).pipe(
+      switchMap((firebaseUser: FirebaseUser | null) => {
+        if (firebaseUser) {
+          return from(this.getUserDataFromFirestore(firebaseUser.uid)).pipe(
+            map(customUserData => ({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: customUserData?.name || firebaseUser.displayName,
+              role: customUserData?.role,
+            } as User)),
+            catchError(() => of({ 
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: firebaseUser.displayName,
+            } as User))
+          );
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
 
-      const userRef = doc(this.firestore, 'users', fbUser.uid);
-      const userSnap = await getDoc(userRef);
 
-      if (userSnap.exists()) {
-        const data = userSnap.data() as Omit<User, 'uid'>;
-        this.userSubject.next({
-          uid: fbUser.uid,
-          email: data.email,
-          name: data.name,
-          role: data.role
-        });
-      } else {
-        this.userSubject.next({
-          uid: fbUser.uid,
-          email: fbUser.email || '',
-          role: 'cliente',
-          name: fbUser.email || 'Sem Nome'
-        });
-      }
-    });
+  getAuthState(): Observable<FirebaseUser | null> {
+    return authState(this.afAuth);
   }
 
   async login(email: string, password: string): Promise<boolean> {
-    try {
-      await signInWithEmailAndPassword(this.auth, email, password);
-      return true;
-    } catch (err) {
-      console.error('Login falhou:', err);
-      return false;
-    }
+    try { await signInWithEmailAndPassword(this.afAuth, email, password); return true; }
+    catch (error) { console.error('Login error:', error); return false; }
   }
 
-  getCurrentUser(): User | null {
-    return this.userSubject.getValue();
-  }
-
-  async signup(
-    email: string,
-    password: string,
-    name: string,
-    role: 'cliente' | 'profissional'
-  ): Promise<boolean> {
+  async register(email: string, password: string, name: string, role: 'cliente' | 'profissional'): Promise<string | null> {
     try {
-      const cred: UserCredential = await createUserWithEmailAndPassword(
-        this.auth,
-        email,
-        password
-      );
-
-      const userRef = doc(this.firestore, 'users', cred.user.uid);
-      await setDoc(userRef, { email, name, role });
-
-      this.userSubject.next({
-        uid: cred.user.uid,
-        email,
-        name,
-        role
+      const userCredential = await createUserWithEmailAndPassword(this.afAuth, email, password);
+      const user = userCredential.user;
+      await setDoc(doc(this.firestore, 'users', user.uid), {
+        uid: user.uid, email: user.email, name: name, role: role
       });
-
-      return true;
-    } catch (err) {
-      console.error('Signup falhou:', err);
-      return false;
-    }
+      if (name) { await updateProfile(user, { displayName: name }); }
+      return user.uid;
+    } catch (error) { console.error('Register error:', error); return null; }
   }
 
-  logout(): void {
-    this.auth.signOut();
-    this.userSubject.next(null);
+  async logout(): Promise<void> {
+    try { await signOut(this.afAuth); }
+    catch (error) { console.error('Logout error:', error); }
+  }
+
+  async getUserDataFromFirestore(uid: string): Promise<User | null> {
+    const userDocRef = doc(this.firestore, 'users', uid);
+    const userDocSnap = await getDoc(userDocRef);
+    return userDocSnap.exists() ? userDocSnap.data() as User : null;
   }
 }
