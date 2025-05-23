@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -7,10 +7,10 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService, User } from '../../services/auth.service.service';
-import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../services/auth.service.service';
 import { doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-login',
@@ -19,9 +19,14 @@ import { getAuth } from 'firebase/auth';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;
   errorMessage = '';
+  showPassword = false;
+  passwordStrength: 'fraca' | 'média' | 'forte' = 'fraca';
+  private loginErrorModal: Modal | null = null;
+
+  @ViewChild('errorModal') errorModalElementRef!: ElementRef;
 
   constructor(
     private authService: AuthService,
@@ -39,51 +44,112 @@ export class LoginComponent implements OnInit {
         Validators.minLength(6)
       ])
     });
+
+    // Atualiza a força da senha sempre que o valor muda
+    this.loginForm.get('password')?.valueChanges.subscribe(password => {
+      this.passwordStrength = this.calculatePasswordStrength(password);
+    });
   }
 
- async onSubmit(): Promise<void> {
-  if (!this.loginForm.valid) return;
-
-  this.errorMessage = '';
-  const { email, password } = this.loginForm.value;
-
-  const success = await this.authService.login(email, password);
-
-  if (!success) {
-    this.errorMessage = 'E-mail ou senha incorretos.';
-    return;
-  }
-
-  try {
-    const auth = getAuth();
-    const fbUser = auth.currentUser;
-
-    if (!fbUser) {
-      this.errorMessage = 'Usuário não encontrado após login.';
-      return;
-    }
-
-    const ref = doc(this.authService['firestore'], 'users', fbUser.uid);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-      this.errorMessage = 'Dados de usuário não encontrados no Firestore.';
-      return;
-    }
-
-    const userData = snap.data() as { role: 'cliente' | 'profissional' };
-
-    if (userData.role === 'profissional') {
-      this.router.navigate(['/professional-dashboard']);
+  ngAfterViewInit(): void {
+    if (this.errorModalElementRef) {
+      this.loginErrorModal = new Modal(this.errorModalElementRef.nativeElement);
     } else {
-      this.router.navigate(['/cliente-dashboard']);
+      console.warn('LoginComponent: Modal element with ID "errorModal" not found.');
     }
-
-  } catch (error) {
-    console.error('Erro ao recuperar dados do usuário:', error);
-    this.errorMessage = 'Erro ao recuperar dados do usuário.';
   }
-}
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  calculatePasswordStrength(password: string): 'fraca' | 'média' | 'forte' {
+    if (!password) return 'fraca';
+
+    const hasLetters = /[a-zA-Z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecials = /[^a-zA-Z0-9]/.test(password);
+
+    if (password.length >= 8 && hasLetters && hasNumbers && hasSpecials) {
+      return 'forte';
+    } else if (password.length >= 6 && hasLetters && hasNumbers) {
+      return 'média';
+    } else {
+      return 'fraca';
+    }
+  }
+
+  async onSubmit(): Promise<void> {
+    if (!this.loginForm.valid) return;
+
+    this.errorMessage = '';
+    const { email, password } = this.loginForm.value;
+
+    try {
+      const success = await this.authService.login(email, password);
+
+      if (!success) {
+        this.errorMessage = 'E-mail ou senha incorretos.';
+        this.showErrorModal();
+        return;
+      }
+
+      const auth = getAuth();
+      const fbUser = auth.currentUser;
+
+      if (!fbUser) {
+        this.errorMessage = 'Usuário não encontrado após login.';
+        this.showErrorModal();
+        return;
+      }
+
+      const ref = doc(this.authService['firestore'], 'users', fbUser.uid);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        this.errorMessage = 'Sua conta de usuário não foi encontrada no banco de dados. Contate o suporte.';
+        this.showErrorModal();
+        await this.authService.logout();
+        return;
+      }
+
+      const userData = snap.data() as { role: 'cliente' | 'profissional' };
+
+      if (userData.role === 'profissional') {
+        this.router.navigate(['/professional-dashboard']);
+      } else {
+        this.router.navigate(['/cliente-dashboard']);
+      }
+
+    } catch (error: any) {
+      console.error('Erro durante o login:', error);
+
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        this.errorMessage = 'E-mail ou senha incorretos.';
+      } else if (error.code === 'auth/invalid-email') {
+        this.errorMessage = 'Formato de e-mail inválido.';
+      } else if (error.code === 'auth/too-many-requests') {
+        this.errorMessage = 'Muitas tentativas. Tente mais tarde.';
+      } else {
+        this.errorMessage = 'Erro inesperado. Tente novamente.';
+      }
+      this.showErrorModal();
+    }
+  }
+
+  showErrorModal(): void {
+    if (this.loginErrorModal) {
+      this.loginErrorModal.show();
+    } else {
+      alert(this.errorMessage);
+    }
+  }
+
+  hideErrorModal(): void {
+    if (this.loginErrorModal) {
+      this.loginErrorModal.hide();
+    }
+  }
 
   navigateTo(page: string): void {
     this.router.navigate([page]);

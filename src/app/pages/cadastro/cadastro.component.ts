@@ -1,17 +1,16 @@
-
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   FormGroup, FormControl, Validators, AbstractControl,
   ValidationErrors, ValidatorFn, ReactiveFormsModule
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, User } from '../../services/auth.service.service';
+import { AuthService } from '../../services/auth.service.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
   encapsulation: ViewEncapsulation.None
@@ -46,11 +45,11 @@ export class CadastroComponent implements OnInit {
       this.errorMessage = "Por favor, corrija os erros no formulário.";
       return;
     }
+
     this.errorMessage = '';
     const { nome, email, password, role } = this.cadastroForm.value;
 
     try {
-    
       const userId = await this.authService.register(email, password, nome, role);
 
       if (userId) {
@@ -60,17 +59,23 @@ export class CadastroComponent implements OnInit {
       } else {
         this.errorMessage = 'Erro ao criar conta. Verifique os dados ou tente mais tarde.';
       }
+
     } catch (error: any) {
       console.error('Erro no cadastro:', error);
-      if (error.code === 'auth/email-already-in-use') {
-        this.errorMessage = 'Este endereço de e-mail já está em uso.';
-      } else {
-        this.errorMessage = 'Ocorreu um erro inesperado durante o cadastro.';
-      }
+      this.errorMessage = error.message || 'Ocorreu um erro inesperado durante o cadastro.';
     }
   }
 
-  navigateTo(page: string): void { this.router.navigate([page]); }
-  openTermsModal(event: Event): void { event.preventDefault(); this.showTermsModal = true; }
-  closeTermsModal(): void { this.showTermsModal = false; }
+  navigateTo(page: string): void {
+    this.router.navigate([page]);
+  }
+
+  openTermsModal(event: Event): void {
+    event.preventDefault();
+    this.showTermsModal = true;
+  }
+
+  closeTermsModal(): void {
+    this.showTermsModal = false;
+  }
 }

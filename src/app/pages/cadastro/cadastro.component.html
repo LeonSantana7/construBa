@@ -128,3 +128,7 @@
 
 
 <div *ngIf="showTermsModal" class="modal-backdrop fade show" (click)="closeTermsModal()"></div>
+<div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
+  {{ errorMessage }}
+</div>
+

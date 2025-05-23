@@ -19,31 +19,53 @@
                 autocomplete="off"
               />
               <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="text-danger mt-1">
-                <div *ngIf="loginForm.get('email')?.errors?.['required']">
-                  O email é obrigatório.
-                </div>
-                <div *ngIf="loginForm.get('email')?.errors?.['email']">
-                  Digite um email válido.
-                </div>
+                <div *ngIf="loginForm.get('email')?.errors?.['required']">O email é obrigatório.</div>
+                <div *ngIf="loginForm.get('email')?.errors?.['email']">Digite um email válido.</div>
               </div>
             </div>
 
             <div class="mb-3">
               <label for="password" class="form-label">Senha</label>
-              <input
-                type="password"
-                id="password"
-                formControlName="password"
-                class="form-control"
-                placeholder="Digite sua senha"
-                autocomplete="new-password"
-              />
+              <div class="input-group">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  formControlName="password"
+                  class="form-control"
+                  placeholder="Digite sua senha"
+                  autocomplete="new-password"
+                />
+                <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()" tabindex="-1">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+
               <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="text-danger mt-1">
-                <div *ngIf="loginForm.get('password')?.errors?.['required']">
-                  A senha é obrigatória.
-                </div>
-                <div *ngIf="loginForm.get('password')?.errors?.['minlength']">
-                  A senha deve ter pelo menos 6 caracteres.
+                <div *ngIf="loginForm.get('password')?.errors?.['required']">A senha é obrigatória.</div>
+                <div *ngIf="loginForm.get('password')?.errors?.['minlength']">A senha deve ter pelo menos 6 caracteres.</div>
+              </div>
+
+              <div *ngIf="loginForm.get('password')?.value" class="mt-2">
+                <small>Força da senha:
+                  <span [ngClass]="{
+                    'text-danger': passwordStrength === 'fraca',
+                    'text-warning': passwordStrength === 'média',
+                    'text-success': passwordStrength === 'forte'
+                  }">{{ passwordStrength | titlecase }}</span>
+                </small>
+                <div class="progress mt-1">
+                  <div 
+                    class="progress-bar"
+                    role="progressbar"
+                    [ngClass]="{
+                      'bg-danger': passwordStrength === 'fraca',
+                      'bg-warning': passwordStrength === 'média',
+                      'bg-success': passwordStrength === 'forte'
+                    }"
+                    [style.width]="
+                      passwordStrength === 'fraca' ? '33%' :
+                      passwordStrength === 'média' ? '66%' : '100%'">
+                  </div>
                 </div>
               </div>
             </div>
@@ -58,6 +80,24 @@
             </p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de erro -->
+<div class="modal fade" #errorModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Erro no login</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="hideErrorModal()"></button>
+      </div>
+      <div class="modal-body">
+        {{ errorMessage }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="hideErrorModal()">Fechar</button>
       </div>
     </div>
   </div>
