@@ -18,9 +18,9 @@ export class ServicesComponent implements OnInit {
   serviceForm!: FormGroup;
 
   pricing = [
-    { service: 'Exemplo 1', price: 'R$ 80-120/m²' },
-    { service: 'Exemplo 2', price: 'R$ 150-200/m²' },
-    { service: 'Exemplo 3', price: 'R$ 50-100/m²' }
+    { service: 'Serviço 1', price: 'R$ 80-120/m²' },
+    { service: 'Serviço 2', price: 'R$ 150-200/m²' },
+    { service: 'Serviço 3', price: 'R$ 50-100/m²' }
   ];
 
   constructor(private dynamicDataService: DynamicDataService) {}
